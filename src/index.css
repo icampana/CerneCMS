@@ -36,11 +36,8 @@
     background-position: center;
     position: absolute;
     z-index: 50;
-    transition: top 0.2s, left 0.2s;
-    /* Move safely to the left */
-    transform: translateX(-120%);
-    pointer-events: auto !important; /* Ensure clickable */
-    visibility: visible !important; /* Force visible for debugging if needed, but rely on extension mainly. Actually, let's trust extension logic but ensure pointer works. */
+
+    pointer-events: auto !important;
 }
 
 /* Force visibility when parent has specific class? No, extension toggles it. */

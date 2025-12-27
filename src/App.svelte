@@ -37,7 +37,7 @@
     <Navbar {view} onNew={handleCreate} onBack={handleBack} />
 
     <div class="cms-shell flex-1 p-8 max-w-7xl mx-auto w-full">
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden min-h-[500px]">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 min-h-[500px]">
             {#if view === 'list'}
                 <div class="p-6 border-b border-gray-100">
                     <h2 class="text-xl font-bold">Pages</h2>
