@@ -9,9 +9,9 @@
     }
 </script>
 
-<Navbar class="border-b border-gray-200 bg-white sticky top-0 z-50">
+<Navbar class="border-b border-gray-800 bg-gray-900 sticky top-0 z-50 text-white">
     <NavBrand href="/admin">
-        <span class="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
+        <span class="self-center whitespace-nowrap text-xl font-semibold text-white">
             CerneCMS
         </span>
     </NavBrand>
@@ -20,7 +20,7 @@
         {#if view === 'list'}
             <Button size="sm" onclick={onNew}>New Page</Button>
         {:else if view === 'editor'}
-            <div class="flex items-center mr-4 text-xs text-gray-500">
+            <div class="flex items-center mr-4 text-xs text-gray-400">
                 {#if editorStore.isSaving}
                     Saving...
                 {:else if editorStore.lastSaved}
@@ -29,18 +29,18 @@
                     Unsaved
                 {/if}
             </div>
-            <Button size="sm" color="alternative" onclick={onBack}>Back</Button>
+            <Button size="sm" color="light" class="text-gray-900" onclick={onBack}>Back</Button>
             <Button size="sm" onclick={handleSave} disabled={editorStore.isSaving}>
                 Save
             </Button>
         {/if}
-        <NavHamburger />
+        <NavHamburger class="text-white hover:bg-gray-800" />
     </div>
 
-    <NavUl>
-        <NavLi href="/admin" active={view === 'list'}>Pages</NavLi>
+    <NavUl class="bg-gray-900 border-gray-800">
+        <NavLi href="/admin" active={view === 'list'} activeClass="text-blue-500" class="text-gray-300 hover:text-white">Pages</NavLi>
         <!-- Future links: Media, Users, Settings -->
-        <NavLi href="#" class="text-gray-400 cursor-not-allowed">Media</NavLi>
-        <NavLi href="#" class="text-gray-400 cursor-not-allowed">Settings</NavLi>
+        <NavLi href="#" class="text-gray-500 cursor-not-allowed">Media</NavLi>
+        <NavLi href="#" class="text-gray-500 cursor-not-allowed">Settings</NavLi>
     </NavUl>
 </Navbar>
