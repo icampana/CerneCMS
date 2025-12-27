@@ -1,5 +1,5 @@
 {
-    "name": "formiga/cms",
+    "name": "cerne/cms",
     "description": "A lightweight, high-performance CMS built with FlightPHP, SQLite, and Svelte 5.",
     "type": "project",
     "require": {

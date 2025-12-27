@@ -6,7 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ## [0.1.0] - 2025-12-27
 ### Added
-- Initial project structure for FlightCMS (FormigaCMS).
+- Initial project structure for FlightCMS (CerneCMS).
 - **Backend Framework**: FlightPHP v3.
 - **Database**: SQLite with `pages` and `blocks` tables.
 - **Models**: ActiveRecord models for `Page` and `Block`.
