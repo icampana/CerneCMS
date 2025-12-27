@@ -45,8 +45,9 @@ Flight::map('session', function () {
     };
 });
 
-// Configure Views
-Flight::set('flight.views.path', __DIR__ . '/app/views');
+// Configure Flight
+Flight::set('flight.views.path', __DIR__ . '/content/themes/default');
+Flight::set('flight.log_errors', true);
 
 // Register Latte
 Flight::register('view', 'Latte\Engine', [], function ($latte) {

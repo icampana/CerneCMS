@@ -22,6 +22,22 @@
         main figure { margin: 2rem 0; text-align: center; }
         main img { max-width: 100%; border-radius: 8px; }
         main figcaption { font-size: 0.9rem; color: #666; margin-top: 0.5rem; }
+
+        /* Grid Layout Support */
+        .grid-layout {
+            display: flex;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        .grid-column {
+            flex: 1;
+            min-width: 0;
+        }
+        @media (max-width: 640px) {
+            .grid-layout {
+                flex-direction: column;
+            }
+        }
     </style>
 </head>
 <body class="bg-white text-gray-900 font-sans antialiased">
