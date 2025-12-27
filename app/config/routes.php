@@ -10,6 +10,12 @@ Flight::group('/admin', function () {
     Flight::route('/dashboard', [AdminController::class, 'dashboard']);
 });
 
+// Dev Auth Route (Temporary)
+Flight::route('GET /dev/login', function () {
+    Flight::session()->set('user_id', 1);
+    Flight::redirect('/admin');
+});
+
 // API Routes
 Flight::group('/api', function () {
     Flight::route('GET /pages', [ApiController::class, 'getPages']);
