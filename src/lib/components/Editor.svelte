@@ -4,22 +4,33 @@
     import BubbleMenu from './menus/BubbleMenu.svelte';
     import FloatingMenu from './menus/FloatingMenu.svelte';
 
+    let { pageId = null, onBack } = $props();
+
     let element;
-    let bubbleMenuComponent;
-    let floatingMenuComponent;
-
-    // In Svelte 5 with Tiptap menus, we need the DOM elements of the menus *before* we init Tiptap.
-    // The Menu components need to render their divs and expose them.
-
     let bubbleMenuEl = $state(null);
     let floatingMenuEl = $state(null);
 
-    onMount(() => {
-        // Wait for bind:this to populate
-        // Small timeout to ensure DOM is ready? Usually onMount is fine.
+    onMount(async () => {
+        // Init Editor
         setTimeout(() => {
              editorStore.init(element, bubbleMenuEl, floatingMenuEl);
         }, 0);
+
+        // Load Data if pageId is present
+        if (pageId) {
+            try {
+                const res = await fetch(`/api/pages/${pageId}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    editorStore.load(data);
+                }
+            } catch (e) {
+                console.error("Failed to load page", e);
+            }
+        } else {
+            // Reset for new page
+            editorStore.reset();
+        }
     });
 
     onDestroy(() => {
@@ -56,6 +67,14 @@
 
         <!-- Actions -->
         <div class="flex items-center gap-2">
+            {#if onBack}
+                <button
+                    onclick={onBack}
+                    class="px-3 py-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg text-sm font-medium transition-colors"
+                >
+                    Back
+                </button>
+            {/if}
             <span class="text-xs text-gray-400">
                 {editorStore.isSaving ? 'Saving...' : editorStore.lastSaved ? 'Saved ' + editorStore.lastSaved.toLocaleTimeString() : 'Unsaved'}
             </span>

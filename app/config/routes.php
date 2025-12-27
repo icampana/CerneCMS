@@ -21,6 +21,8 @@ Flight::group('/api', function () {
     Flight::route('GET /pages', [ApiController::class, 'getPages']);
     Flight::route('GET /pages/@id', [ApiController::class, 'getPage']);
     Flight::route('POST /pages', [ApiController::class, 'savePage']);
+    Flight::route('GET /media', [ApiController::class, 'getMedia']);
+    Flight::route('POST /media', [ApiController::class, 'uploadMedia']);
 }, [new \app\middleware\AuthMiddleware()]);
 
 // Frontend Routes (Catch-all for pages)

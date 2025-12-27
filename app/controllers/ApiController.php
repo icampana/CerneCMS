@@ -20,8 +20,25 @@ class ApiController
     {
         $pageModel = new Page();
         $page = $pageModel->find($id);
+
         if ($page) {
-            Flight::json($page);
+            // Fetch associated content block
+            $blockModel = new Block();
+            $blocks = $blockModel->eq('page_id', $page->id)->eq('zone', 'main')->findAll();
+            $block = !empty($blocks) ? $blocks[0] : null;
+
+            $response = [
+                'id' => $page->id,
+                'title' => $page->title,
+                'slug' => $page->slug,
+                'status' => $page->status,
+                'created_at' => $page->created_at,
+                'updated_at' => $page->updated_at,
+                // Return content as object (decoded from the stored JSON string)
+                'content' => $block ? json_decode($block->content_json) : null
+            ];
+
+            Flight::json($response);
         } else {
             Flight::halt(404, json_encode(['error' => 'Page not found']));
         }
@@ -85,5 +102,56 @@ class ApiController
                 'id' => $page->id
             ]
         ]);
+    }
+    public function getMedia()
+    {
+        $uploadDir = __DIR__ . '/../../public/assets/uploads';
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0777, true);
+        }
+
+        $files = array_diff(scandir($uploadDir), ['.', '..', '.gitignore']);
+        $media = [];
+
+        foreach ($files as $file) {
+            $media[] = [
+                'name' => $file,
+                'url' => '/assets/uploads/' . $file,
+                'type' => mime_content_type($uploadDir . '/' . $file)
+            ];
+        }
+
+        Flight::json($media);
+    }
+
+    public function uploadMedia()
+    {
+        $uploadDir = __DIR__ . '/../../public/assets/uploads';
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0777, true);
+        }
+
+        if (empty($_FILES['file'])) {
+            Flight::halt(400, json_encode(['error' => 'No file uploaded']));
+        }
+
+        $file = $_FILES['file'];
+        $filename = basename($file['name']);
+        // Sanitize filename
+        $filename = preg_replace('/[^a-zA-Z0-9\._-]/', '', $filename);
+
+        // Target path
+        $targetPath = $uploadDir . '/' . $filename;
+
+        // Move file
+        if (move_uploaded_file($file['tmp_name'], $targetPath)) {
+            Flight::json([
+                'status' => 'success',
+                'url' => '/assets/uploads/' . $filename,
+                'name' => $filename
+            ]);
+        } else {
+            Flight::halt(500, json_encode(['error' => 'Failed to move uploaded file']));
+        }
     }
 }

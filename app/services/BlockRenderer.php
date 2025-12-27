@@ -70,6 +70,12 @@ class BlockRenderer
                 $caption = $title ? "<figcaption>{$title}</figcaption>" : "";
                 return "<figure><img src=\"{$src}\" alt=\"{$alt}\" title=\"{$title}\">{$caption}</figure>";
 
+            case 'grid':
+                return "<div class=\"grid-layout flex gap-4 my-4\">{$content}</div>";
+
+            case 'column':
+                return "<div class=\"grid-column flex-1 min-w-0\">{$content}</div>";
+
             default:
                 // Fallback for unknown blocks (or just ignore)
                 return $content;
