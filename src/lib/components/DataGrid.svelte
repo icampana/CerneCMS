@@ -1,5 +1,7 @@
 <script>
     import { onMount } from 'svelte';
+    import { Button } from 'flowbite-svelte';
+    import { PenOutline, TrashBinOutline } from 'flowbite-svelte-icons';
 
     // Props
     let { endpoint, columns = [], onEdit, onDelete } = $props();
@@ -62,17 +64,12 @@
                             </td>
                         {/each}
                         <td class="px-6 py-4 text-right space-x-2">
-                             <button
-                                onclick={() => onEdit(item)}
-                                class="text-blue-600 hover:text-blue-800 font-medium">
-                                Edit
-                            </button>
-                            <!-- Delete not implemented in API yet, but UI is ready -->
-                             <button
-                                onclick={() => onDelete && onDelete(item)}
-                                class="text-red-400 hover:text-red-600">
-                                Delete
-                            </button>
+                            <Button size="xs" color="light" class="!p-2" onclick={() => onEdit(item)}>
+                                <PenOutline class="w-4 h-4 text-primary-700 dark:text-primary-500" />
+                            </Button>
+                            <Button size="xs" color="light" class="!p-2" onclick={() => onDelete && onDelete(item)}>
+                                <TrashBinOutline class="w-4 h-4 text-red-500 dark:text-red-500" />
+                            </Button>
                         </td>
                     </tr>
                 {/each}

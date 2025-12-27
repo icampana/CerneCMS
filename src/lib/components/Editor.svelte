@@ -56,35 +56,16 @@
     </div>
 
     <!-- Header / Toolbar -->
-    <div class="bg-white border-b border-gray-200 p-4 flex items-center justify-between gap-4 sticky top-0 z-10">
+    <div class="bg-white border-b border-gray-200 p-4 sticky top-0 z-10">
         <!-- Title Input -->
         <input
             type="text"
             bind:value={editorStore.title}
             placeholder="Page Title"
-            class="text-xl font-bold text-gray-800 border-none focus:ring-0 placeholder-gray-300 bg-transparent flex-1"
+            class="w-full text-3xl font-bold text-gray-800 border-none focus:ring-0 placeholder-gray-300 bg-transparent px-0"
         />
-
-        <!-- Actions -->
-        <div class="flex items-center gap-2">
-            {#if onBack}
-                <button
-                    onclick={onBack}
-                    class="px-3 py-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg text-sm font-medium transition-colors"
-                >
-                    Back
-                </button>
-            {/if}
-            <span class="text-xs text-gray-400">
-                {editorStore.isSaving ? 'Saving...' : editorStore.lastSaved ? 'Saved ' + editorStore.lastSaved.toLocaleTimeString() : 'Unsaved'}
-            </span>
-            <button
-                onclick={() => editorStore.save()}
-                disabled={editorStore.isSaving}
-                class="px-4 py-2 bg-black text-white rounded-lg text-sm font-medium hover:bg-gray-800 disabled:opacity-50 transition-colors"
-            >
-                Save
-            </button>
+        <div class="text-sm text-gray-400 mt-1">
+             /{editorStore.slug || 'slug'}
         </div>
     </div>
 

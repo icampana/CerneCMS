@@ -1,5 +1,6 @@
 <script>
     import Editor from './lib/components/Editor.svelte';
+    import Navbar from './lib/components/Navbar.svelte';
     import DataGrid from './lib/components/DataGrid.svelte';
     import MediaManager from './lib/components/MediaManager.svelte';
     import { editorStore } from './lib/stores/editor.svelte.js';
@@ -32,39 +33,29 @@
     }
 </script>
 
-<div class="cms-shell p-8 max-w-5xl mx-auto">
-    <div class="mb-6 flex justify-between items-center">
-        <div>
-            <h1 class="text-3xl font-bold mb-2">
-                {view === 'list' ? 'Pages' : (activePageId ? 'Edit Page' : 'New Page')}
-            </h1>
-            <p class="text-gray-600">Manage your content.</p>
-        </div>
+<div class="min-h-screen bg-gray-50 flex flex-col">
+    <Navbar {view} onNew={handleCreate} onBack={handleBack} />
 
-        {#if view === 'list'}
-            <button
-                onclick={handleCreate}
-                class="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors">
-                New Page
-            </button>
-        {/if}
-    </div>
-
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        {#if view === 'list'}
-            <DataGrid
-                endpoint="/api/pages"
-                columns={pageColumns}
-                onEdit={handleEdit}
-            />
-        {:else}
-            {#key activePageId}
-                <Editor
-                    pageId={activePageId}
-                    onBack={handleBack}
+    <div class="cms-shell flex-1 p-8 max-w-7xl mx-auto w-full">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden min-h-[500px]">
+            {#if view === 'list'}
+                <div class="p-6 border-b border-gray-100">
+                    <h2 class="text-xl font-bold">Pages</h2>
+                </div>
+                <DataGrid
+                    endpoint="/api/pages"
+                    columns={pageColumns}
+                    onEdit={handleEdit}
                 />
-            {/key}
-        {/if}
+            {:else}
+                {#key activePageId}
+                    <Editor
+                        pageId={activePageId}
+                        onBack={handleBack}
+                    />
+                {/key}
+            {/if}
+        </div>
     </div>
 </div>
 
