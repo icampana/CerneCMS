@@ -1,0 +1,17 @@
+
+# Dependencies
+/vendor
+/node_modules
+
+# Environment
+.env
+
+# Database
+/content/database/*.sqlite
+
+# Generated Assets
+/public/assets
+
+# OS Files
+.DS_Store
+Thumbs.db
