@@ -3,6 +3,7 @@
     import { editorStore } from '../stores/editor.svelte.js';
     import BubbleMenu from './menus/BubbleMenu.svelte';
     import FloatingMenu from './menus/FloatingMenu.svelte';
+    import ComponentToolbar from './ComponentToolbar.svelte';
 
     let { pageId = null, onBack } = $props();
 
@@ -38,7 +39,7 @@
     });
 </script>
 
-<div class="editor-wrapper border border-gray-200 rounded-lg overflow-hidden bg-white shadow-sm relative group">
+<div class="editor-wrapper border border-gray-200 rounded-lg bg-white shadow-sm relative group">
     <!-- Menus -->
     <!-- We pass bind:this to get the component instance, but we actually need the DOM element inside. -->
     <!-- Simpler: define the divs here and pass them to the store, and just use the logic in the components? -->
@@ -56,7 +57,7 @@
     </div>
 
     <!-- Header / Toolbar -->
-    <div class="bg-white border-b border-gray-200 p-4 sticky top-0 z-10">
+    <div class="bg-white border-b border-gray-200 p-4 sticky top-0 z-20">
         <!-- Title Input -->
         <input
             type="text"
@@ -69,19 +70,27 @@
         </div>
     </div>
 
+    <!-- Component Toolbar (Sticky below header) -->
+    <ComponentToolbar />
+
     <!-- Tiptap Instance -->
-    <div bind:this={element} class="prose prose-lg max-w-none p-8 min-h-[500px] outline-none mx-auto"></div>
+    <div bind:this={element} class="prose prose-lg max-w-none min-h-[500px] outline-none mx-auto"></div>
 
     <!-- Debug Output (Dev Only) -->
+    <!-- Debug Output (Hidden by default) -->
+    <!--
     <div class="bg-gray-900 text-gray-100 p-4 text-xs font-mono border-t border-gray-800">
         <div class="uppercase tracking-widest text-gray-500 mb-2">Debug Content State</div>
         {editorStore.content}
     </div>
+    -->
 </div>
 
 <style>
     /* Scoped styles if needed, mostly using Tailwind */
     :global(.ProseMirror) {
         outline: none;
+        padding: 2rem;
+        min-height: 500px;
     }
 </style>

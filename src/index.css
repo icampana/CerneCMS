@@ -11,16 +11,36 @@
     --font-display: "Outfit", ui-sans-serif, system-ui, sans-serif;
     --font-body: "Roboto", ui-sans-serif, system-ui, sans-serif;
 
-    --color-primary-50: #FFF5F2;
-    --color-primary-100: #FFF1EE;
-    --color-primary-200: #FFE4DE;
-    --color-primary-300: #FFD5CC;
-    --color-primary-400: #FFBCAD;
-    --color-primary-500: #FE795D;
-    --color-primary-600: #EF562F;
-    --color-primary-700: #EB4F27;
-    --color-primary-800: #CC4522;
-    --color-primary-900: #A5371B;
+    --color-primary-50: #eff6ff;
+    --color-primary-100: #dbeafe;
+    --color-primary-200: #bfdbfe;
+    --color-primary-300: #93c5fd;
+    --color-primary-400: #60a5fa;
+    --color-primary-500: #3b82f6;
+    --color-primary-600: #2563eb;
+    --color-primary-700: #1d4ed8;
+    --color-primary-800: #1e40af;
+    --color-primary-900: #1e3a8a;
+    --color-primary-950: #172554;
+}
+
+/* Global Drag Handle Styles */
+.drag-handle {
+    width: 1.5rem;
+    height: 1.5rem;
+    color: #9CA3AF;
+    cursor: grab;
+    background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 16"><path fill-opacity="0.2" d="M4 14c0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2 2 .9 2 2zM2 6C.9 6 0 6.9 0 8s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0-6C.9 0 0 .9 0 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm6 4c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" /></svg>');
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+    position: absolute;
+    z-index: 50;
+    transition: top 0.2s, left 0.2s;
+}
+
+.drag-handle:hover {
+    color: #4B5563;
 }
 
 @layer base {

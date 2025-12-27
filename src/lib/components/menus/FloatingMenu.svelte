@@ -37,18 +37,6 @@
         >
             Img
         </button>
-        <button
-            onclick={() => editorStore.editor.chain().focus().setGrid().run()}
-            class="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-sm text-gray-700 border border-gray-300 shadow-sm"
-        >
-            2 Col
-        </button>
-        <button
-            onclick={() => editorStore.editor.chain().focus().setGrid3().run()}
-            class="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-sm text-gray-700 border border-gray-300 shadow-sm"
-        >
-            3 Col
-        </button>
     {/if}
 </div>
 

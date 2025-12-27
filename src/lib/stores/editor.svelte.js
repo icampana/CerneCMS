@@ -6,6 +6,7 @@
     import Image from '@tiptap/extension-image';
 import Grid from '../extensions/Grid';
 import Column from '../extensions/Column';
+import DragHandle from '@tiptap/extension-drag-handle';
     import { SvelteNodeViewRenderer } from 'svelte-tiptap';
     import ImageBlock from '../components/blocks/ImageBlock.svelte';
 
@@ -60,17 +61,65 @@ import Column from '../extensions/Column';
                 }),
                 Grid,
                 Column,
+                DragHandle.configure({
+                    render: () => {
+                        const element = document.createElement('div');
+                        element.classList.add('drag-handle');
+                        return element;
+                    },
+                }),
 
-                    BubbleMenuExtension.configure({
-                        element: bubbleMenuEl,
-                        tippyOptions: { duration: 100 },
-                    }),
-                    FloatingMenuExtension.configure({
-                        element: floatingMenuEl,
-                        tippyOptions: { duration: 100 },
-                    })
-                ],
-                content: this.content,
+                BubbleMenuExtension.configure({
+                    element: bubbleMenuEl,
+                }),
+                FloatingMenuExtension.configure({
+                    element: floatingMenuEl,
+                })
+            ],
+            editorProps: {
+                handleDrop: (view, event, slice, moved) => {
+                    if (!moved && event.dataTransfer && event.dataTransfer.getData('cerne/type')) {
+                        event.preventDefault();
+
+                        const type = event.dataTransfer.getData('cerne/type');
+                        const coordinates = view.posAtCoords({ left: event.clientX, top: event.clientY });
+
+                        if (coordinates) {
+                            const { pos } = coordinates;
+
+                            // Insert based on type
+                            let content;
+                            if (type === 'image') {
+                                // Insert placeholder image or open media library?
+                                // Let's open media library but store the target pos?
+                                // For now, insert placeholder
+                                const url = 'https://placehold.co/600x400';
+                                view.dispatch(view.state.tr.insert(pos, view.state.schema.nodes.image.create({ src: url })));
+                            } else if (type === 'grid-2') {
+                                view.dispatch(view.state.tr.insert(pos, view.state.schema.nodes.grid.create({ colCount: 2 }, [
+                                    view.state.schema.nodes.column.create(),
+                                    view.state.schema.nodes.column.create()
+                                ])));
+                            } else if (type === 'grid-3') {
+                                view.dispatch(view.state.tr.insert(pos, view.state.schema.nodes.grid.create({ colCount: 3 }, [
+                                    view.state.schema.nodes.column.create(),
+                                    view.state.schema.nodes.column.create(),
+                                    view.state.schema.nodes.column.create()
+                                ])));
+                            } else if (type === 'heading') {
+                                view.dispatch(view.state.tr.insert(pos, view.state.schema.nodes.heading.create({ level: 2 }, view.state.schema.text('Heading 2'))));
+                            } else {
+                                view.dispatch(view.state.tr.insert(pos, view.state.schema.nodes.paragraph.create(null, view.state.schema.text('Start writing your text here...'))));
+                            }
+
+                            view.focus();
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+            },
+            content: this.content,
                 onUpdate: ({ editor }) => {
                     this.content = editor.getHTML();
                 },
