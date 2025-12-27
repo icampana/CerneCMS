@@ -35,4 +35,36 @@ class Vite
         }
         return [];
     }
+    /**
+     * Output the HTML tags for Vite assets (JS + CSS)
+     */
+    public static function assets()
+    {
+        $manifestPath = __DIR__ . '/../../public/assets/.vite/manifest.json';
+        $isDev = !file_exists($manifestPath);
+
+        if ($isDev) {
+            return '
+                <script type="module" src="http://localhost:5173/@vite/client"></script>
+                <script type="module" src="http://localhost:5173/src/main.js"></script>
+            ';
+        }
+
+        // Production
+        $html = '';
+
+        // CSS
+        $cssFiles = self::css('main.js');
+        foreach ($cssFiles as $css) {
+            $html .= '<link rel="stylesheet" href="' . $css . '">';
+        }
+
+        // JS
+        $jsFile = self::asset('main.js');
+        if ($jsFile) {
+            $html .= '<script type="module" src="' . $jsFile . '"></script>';
+        }
+
+        return $html;
+    }
 }

@@ -45,6 +45,28 @@ Flight::map('session', function () {
     };
 });
 
+// Configure Views
+Flight::set('flight.views.path', __DIR__ . '/app/views');
+
+// Register Latte
+Flight::register('view', 'Latte\Engine', [], function ($latte) {
+    // Configure cache directory
+    $cacheDir = __DIR__ . '/public/cache';
+    if (!is_dir($cacheDir)) {
+        mkdir($cacheDir, 0777, true);
+    }
+    $latte->setTempDirectory($cacheDir);
+
+    // Configure FileLoader
+    $viewDir = Flight::get('flight.views.path');
+    $latte->setLoader(new \Latte\Loaders\FileLoader($viewDir));
+});
+
+// Override Flight::render to use Latte
+Flight::map('render', function ($template, $data) {
+    echo Flight::view()->render($template, $data);
+});
+
 // Load Routes
 require 'app/config/routes.php';
 

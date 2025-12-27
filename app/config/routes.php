@@ -23,6 +23,6 @@ Flight::group('/api', function () {
     Flight::route('POST /pages', [ApiController::class, 'savePage']);
 }, [new \app\middleware\AuthMiddleware()]);
 
-// Frontend Catch-all
-// We use a pattern that matches everything not already matched
-Flight::route('/*', [FrontendController::class, 'render']);
+// Frontend Routes (Catch-all for pages)
+Flight::route('/', [FrontendController::class, 'renderPage']);
+Flight::route('/@slug', [FrontendController::class, 'renderPage']);
