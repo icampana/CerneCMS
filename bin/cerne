@@ -1,0 +1,41 @@
+#!/usr/bin/env php
+<?php
+
+// CLI Entry Point for CerneCMS
+
+$args = array_slice($argv, 1);
+$command = $args[0] ?? 'help';
+
+echo "CerneCMS CLI Tool\n";
+echo "-----------------\n";
+
+switch ($command) {
+    case 'cache:clear':
+        echo "Clearing cache...\n";
+        $cacheDir = __DIR__ . '/../public/cache';
+        if (is_dir($cacheDir)) {
+            $files = new RecursiveIteratorIterator(
+                new RecursiveDirectoryIterator($cacheDir, RecursiveDirectoryIterator::SKIP_DOTS),
+                RecursiveIteratorIterator::CHILD_FIRST
+            );
+
+            foreach ($files as $fileinfo) {
+                $todo = ($fileinfo->isDir() ? 'rmdir' : 'unlink');
+                $todo($fileinfo->getRealPath());
+            }
+            // rm -rf behavior: remove the dir itself if you want, or just empty it.
+            // Keeping the dir is safer.
+            echo "✔ Cache cleared successfully.\n";
+        } else {
+            echo "✔ Cache directory does not exist (nothing to clear).\n";
+        }
+        break;
+
+    case 'help':
+    default:
+        echo "Available commands:\n";
+        echo "  cache:clear   Clear the application cache (Latte)\n";
+        break;
+}
+
+echo "\n";
