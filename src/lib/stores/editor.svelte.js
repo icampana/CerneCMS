@@ -60,29 +60,7 @@ import Column from '../extensions/Column';
                 }),
                 Grid,
                 Column,
-                SlashCore.configure({
-                    suggestion: {
-                        items: ({ query }) => {
-                            return [
-                                { title: 'Heading 1', command: ({ editor, range }) => { editor.chain().focus().deleteRange(range).toggleHeading({ level: 1 }).run() } },
-                                { title: 'Heading 2', command: ({ editor, range }) => { editor.chain().focus().deleteRange(range).toggleHeading({ level: 2 }).run() } },
-                                { title: 'Bullet List', command: ({ editor, range }) => { editor.chain().focus().deleteRange(range).toggleBulletList().run() } },
-                                { title: 'Image', command: ({ editor, range }) => {
-                                    // Use proper store reference via closure or context if needed,
-                                    // for now standard prompt fallback or integration point
-                                    // Actually we will use the same store method if possible,
-                                    // but accessing instance methods from here is tricky inside `configure`.
-                                    // We might rely on global state or event bus.
-                                    // For simplicity in this demo, let's keep it basic or rely on the Floating Menu.
-                                    const url = prompt('Image URL');
-                                    if(url) editor.chain().focus().deleteRange(range).setImage({ src: url }).run()
-                                }},
-                                { title: '2 Columns', command: ({ editor, range }) => { editor.chain().focus().deleteRange(range).setGrid().run() } },
-                                { title: '3 Columns', command: ({ editor, range }) => { editor.chain().focus().deleteRange(range).setGrid3().run() } }
-                            ].filter(item => item.title.toLowerCase().startsWith(query.toLowerCase()));
-                        }
-                    }
-                }),
+
                     BubbleMenuExtension.configure({
                         element: bubbleMenuEl,
                         tippyOptions: { duration: 100 },

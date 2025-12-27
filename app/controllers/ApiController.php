@@ -98,7 +98,12 @@ class ApiController
         Flight::json([
             'status' => 'success',
             'data' => [
-                'page' => $page->item, // Flight AR item data
+                'page' => [
+                    'id' => $page->id,
+                    'title' => $page->title,
+                    'slug' => $page->slug,
+                    'updated_at' => $page->updated_at
+                ],
                 'id' => $page->id
             ]
         ]);

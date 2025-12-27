@@ -33,6 +33,11 @@ class BlockRenderer
         $content = isset($node['content']) ? $this->renderNodes($node['content']) : '';
         $text = $node['text'] ?? '';
 
+        // Sanitize first
+        // Note: We might need to handle entities intelligently if Tiptap sends them?
+        // Usually Tiptap sends raw chars.
+        $text = htmlspecialchars($text);
+
         // Handle Marks (Bold, Italic, Strike)
         if (isset($node['marks'])) {
             foreach (array_reverse($node['marks']) as $mark) {
@@ -42,7 +47,7 @@ class BlockRenderer
 
         // If it's a text node, return the text (possibly marked)
         if ($type === 'text') {
-            return htmlspecialchars($text); // Basic sanitization
+            return $text;
         }
 
         // Handle Blocks

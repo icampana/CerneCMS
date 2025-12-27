@@ -6,21 +6,7 @@
     let element;
     let plugin = $state(null);
 
-    $effect(() => {
-        if (editorStore.editor && element && !plugin) {
-            plugin = BubbleMenu.configure({
-                element,
-                tippyOptions: { duration: 100 },
-            });
-            // We need to manually register/unregister the extension instance or configure it
-            // Typically in Svelte we configure the extension in the editor creation and bind the DOM element here.
-            // However, typical Tiptap-Svelte usage involves passing the element to the extension instance *after* mount.
 
-            // Re-configure the extension in the store logic is complex.
-            // Alternative: The standard way in Svelte is letting the Editor know about this element.
-            editorStore.registerMenu('bubble', element);
-        }
-    });
 </script>
 
 <div bind:this={element} class="bubble-menu flex bg-white border border-gray-200 shadow-lg rounded-lg overflow-hidden p-1 gap-1">
