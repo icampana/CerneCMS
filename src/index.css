@@ -37,10 +37,46 @@
     position: absolute;
     z-index: 50;
     transition: top 0.2s, left 0.2s;
+    /* Move safely to the left */
+    transform: translateX(-120%);
+    pointer-events: auto !important; /* Ensure clickable */
+    visibility: visible !important; /* Force visible for debugging if needed, but rely on extension mainly. Actually, let's trust extension logic but ensure pointer works. */
 }
+
+/* Force visibility when parent has specific class? No, extension toggles it. */
 
 .drag-handle:hover {
     color: #4B5563;
+}
+
+/* Editor Grid Column Styles */
+.grid-column {
+    min-height: 4rem;
+    transition: background-color 0.2s, border-color 0.2s;
+    cursor: text;
+    position: relative;
+    z-index: 20;
+    /* Flex column to stretch paragraph */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Make paragraph inside column stretch to fill it */
+.grid-column p {
+    flex-grow: 1;
+    min-height: 2rem;
+    width: 100%;
+}
+
+.grid-column:hover {
+    background-color: #F9FAFB;
+    border-color: #D1D5DB;
+}
+
+/* Ensure Grid container doesn't block */
+.grid-layout {
+    position: relative;
+    z-index: 10;
 }
 
 @layer base {

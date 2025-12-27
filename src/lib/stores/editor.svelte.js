@@ -90,21 +90,29 @@ import DragHandle from '@tiptap/extension-drag-handle';
                             // Insert based on type
                             let content;
                             if (type === 'image') {
-                                // Insert placeholder image or open media library?
-                                // Let's open media library but store the target pos?
-                                // For now, insert placeholder
-                                const url = 'https://placehold.co/600x400';
-                                view.dispatch(view.state.tr.insert(pos, view.state.schema.nodes.image.create({ src: url })));
+                                // Insert placeholder first
+                                const placeholderUrl = 'https://placehold.co/600x400?text=Select+Image';
+                                const tr = view.state.tr.insert(pos, view.state.schema.nodes.image.create({ src: placeholderUrl }));
+                                // Select the inserted image
+                                const selection = view.state.selection.constructor.near(tr.doc.resolve(pos), 1);
+                                tr.setSelection(selection);
+                                view.dispatch(tr);
+
+                                // Open Media Library immediately
+                                this.openMediaLibrary((url) => {
+                                    // Update the selected image (which we just inserted)
+                                    this.editor.chain().focus().setImage({ src: url }).run();
+                                });
                             } else if (type === 'grid-2') {
                                 view.dispatch(view.state.tr.insert(pos, view.state.schema.nodes.grid.create({ colCount: 2 }, [
-                                    view.state.schema.nodes.column.create(),
-                                    view.state.schema.nodes.column.create()
+                                    view.state.schema.nodes.column.create(null, [view.state.schema.nodes.paragraph.create()]),
+                                    view.state.schema.nodes.column.create(null, [view.state.schema.nodes.paragraph.create()])
                                 ])));
                             } else if (type === 'grid-3') {
                                 view.dispatch(view.state.tr.insert(pos, view.state.schema.nodes.grid.create({ colCount: 3 }, [
-                                    view.state.schema.nodes.column.create(),
-                                    view.state.schema.nodes.column.create(),
-                                    view.state.schema.nodes.column.create()
+                                    view.state.schema.nodes.column.create(null, [view.state.schema.nodes.paragraph.create()]),
+                                    view.state.schema.nodes.column.create(null, [view.state.schema.nodes.paragraph.create()]),
+                                    view.state.schema.nodes.column.create(null, [view.state.schema.nodes.paragraph.create()])
                                 ])));
                             } else if (type === 'heading') {
                                 view.dispatch(view.state.tr.insert(pos, view.state.schema.nodes.heading.create({ level: 2 }, view.state.schema.text('Heading 2'))));
