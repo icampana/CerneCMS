@@ -72,8 +72,13 @@ class BlockRenderer
                 $src = $node['attrs']['src'] ?? '';
                 $alt = $node['attrs']['alt'] ?? '';
                 $title = $node['attrs']['title'] ?? '';
+                $lightbox = $node['attrs']['lightbox'] ?? false;
                 $caption = $title ? "<figcaption>{$title}</figcaption>" : "";
-                return "<figure><img src=\"{$src}\" alt=\"{$alt}\" title=\"{$title}\">{$caption}</figure>";
+
+                $lightboxAttr = $lightbox ? 'data-pswp-width="auto" data-pswp-height="auto"' : '';
+                $lightboxClass = $lightbox ? 'cursor-pointer hover:opacity-90' : '';
+
+                return "<figure><img src=\"{$src}\" alt=\"{$alt}\" title=\"{$title}\" {$lightboxAttr} class=\"{$lightboxClass}\">{$caption}</figure>";
 
             case 'grid':
                 return "<div class=\"grid-layout flex gap-4 my-4\">{$content}</div>";

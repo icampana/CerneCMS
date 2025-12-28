@@ -1,5 +1,6 @@
 <script>
     import { onMount } from 'svelte';
+    import { editorStore } from '../stores/editor.svelte.js';
 
     let { onSelect } = $props();
 
@@ -22,15 +23,59 @@
         }
     }
 
+    async function resizeImage(file, maxWidth = 1920, quality = 0.8) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = (event) => {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = () => {
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > maxWidth) {
+                        height = Math.round((height * maxWidth) / width);
+                        width = maxWidth;
+                    }
+
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    canvas.toBlob((blob) => {
+                         if (!blob) {
+                             reject(new Error('Canvas to Blob failed'));
+                             return;
+                         }
+                         resolve(new File([blob], file.name, {
+                            type: 'image/jpeg',
+                            lastModified: Date.now()
+                        }));
+                    }, 'image/jpeg', quality);
+                };
+                img.onerror = (error) => reject(error);
+            };
+            reader.onerror = (error) => reject(error);
+        });
+    }
+
     async function handleUpload(e) {
-        const file = e.target.files[0];
-        if (!file) return;
+        const originalFile = e.target.files[0];
+        if (!originalFile) return;
 
         uploading = true;
-        const formData = new FormData();
-        formData.append('file', file);
 
         try {
+            // Resize image before upload to avoid server limits and save space
+            editorStore.showToast('Optimizing image...', 'info');
+            const file = await resizeImage(originalFile);
+
+            const formData = new FormData();
+            formData.append('file', file);
+
             const res = await fetch('/api/media', {
                 method: 'POST',
                 body: formData
@@ -38,12 +83,14 @@
 
             if (res.ok) {
                 await loadMedia(); // Refresh list
+                editorStore.showToast('Image uploaded successfully', 'success');
             } else {
-                alert('Upload failed');
+                const errorData = await res.json().catch(() => ({}));
+                editorStore.showToast('Upload failed: ' + (errorData.error || res.statusText), 'error');
             }
         } catch (e) {
             console.error(e);
-            alert('Upload error');
+            editorStore.showToast('Upload error: ' + e.message, 'error');
         } finally {
             uploading = false;
             // Clear input

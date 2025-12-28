@@ -148,6 +148,21 @@ class ApiController
         // Target path
         $targetPath = $uploadDir . '/' . $filename;
 
+        if ($file['error'] !== UPLOAD_ERR_OK) {
+            $errorMessages = [
+                UPLOAD_ERR_INI_SIZE => 'The uploaded file exceeds the upload_max_filesize directive in php.ini',
+                UPLOAD_ERR_FORM_SIZE => 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form',
+                UPLOAD_ERR_PARTIAL => 'The uploaded file was only partially uploaded',
+                UPLOAD_ERR_NO_FILE => 'No file was uploaded',
+                UPLOAD_ERR_NO_TMP_DIR => 'Missing a temporary folder',
+                UPLOAD_ERR_CANT_WRITE => 'Failed to write file to disk',
+                UPLOAD_ERR_EXTENSION => 'A PHP extension stopped the file upload',
+            ];
+            $message = $errorMessages[$file['error']] ?? 'Unknown upload error';
+            Flight::halt(400, json_encode(['error' => $message]));
+            return;
+        }
+
         // Move file
         if (move_uploaded_file($file['tmp_name'], $targetPath)) {
             Flight::json([
@@ -156,7 +171,15 @@ class ApiController
                 'name' => $filename
             ]);
         } else {
-            Flight::halt(500, json_encode(['error' => 'Failed to move uploaded file']));
+            // Log the error for debugging
+            error_log("Failed to move uploaded file from {$file['tmp_name']} to {$targetPath}");
+            // Check if directory is writable
+            if (!is_writable($uploadDir)) {
+                error_log("Upload directory is not writable: $uploadDir");
+                Flight::halt(500, json_encode(['error' => 'Upload directory permission denied']));
+                return;
+            }
+            Flight::halt(500, json_encode(['error' => 'Failed to move uploaded file. Check server logs.']));
         }
     }
 }

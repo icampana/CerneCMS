@@ -93,6 +93,25 @@
     z-index: 10;
 }
 
+/* Lightbox Styles */
+img[data-pswp-width] {
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+img[data-pswp-width]:hover {
+    opacity: 0.9;
+}
+
+/* PhotoSwipe custom styles */
+.pswp {
+    --pswp-bg: rgba(0, 0, 0, 0.9);
+    --pswp-icon-color: #fff;
+    --pswp-icon-color-secondary: #4f5f6f;
+    --pswp-icon-stroke-color: rgba(255, 255, 255, 0.5);
+    --pswp-error-text-color: var(--pswp-icon-color);
+}
+
 @layer base {
     body {
         @apply font-body text-gray-900 bg-gray-50;

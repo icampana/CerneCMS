@@ -82,6 +82,19 @@ import DragHandle from '@tiptap/extension-drag-handle';
                     HTMLAttributes: {
                         class: 'rounded-lg max-w-full',
                     },
+                    addAttributes() {
+                        return {
+                            ...this.parent?.(),
+                            lightbox: {
+                                default: false,
+                                parseHTML: element => element.getAttribute('data-lightbox') === 'true',
+                                renderHTML: attributes => {
+                                    if (!attributes.lightbox) return {};
+                                    return { 'data-lightbox': 'true' };
+                                }
+                            }
+                        };
+                    }
                 }).extend({ // Re-adding the extend part for SvelteNodeViewRenderer
                     addNodeView() {
                         return SvelteNodeViewRenderer(ImageBlock);
