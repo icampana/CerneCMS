@@ -425,16 +425,14 @@ import DragHandle from '@tiptap/extension-drag-handle';
         }
 
         clearFormatting() {
-            if (!this.editor || !this.currentBlockRange) {
+            if (!this.editor) {
                 this.closeBlockMenu();
                 return;
             }
 
-            const { start, end } = this.currentBlockRange;
-
-            // Select the block content, then clear formatting
+            // Use selectParentNode to select the current block, then clear marks
             this.editor.chain()
-                .setTextSelection({ from: start, to: end })
+                .selectParentNode()
                 .unsetAllMarks()
                 .run();
             this.closeBlockMenu();
