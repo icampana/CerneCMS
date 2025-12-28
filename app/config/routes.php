@@ -2,19 +2,19 @@
 
 use app\controllers\AdminController;
 use app\controllers\ApiController;
+use app\controllers\AuthController;
 use app\controllers\FrontendController;
+
+// Auth Routes
+Flight::route('GET /login', [AuthController::class, 'loginData']);
+Flight::route('POST /login', [AuthController::class, 'login']);
+Flight::route('GET /logout', [AuthController::class, 'logout']);
 
 // Admin Routes
 Flight::group('/admin', function () {
     Flight::route('/', [AdminController::class, 'dashboard']);
     Flight::route('/dashboard', [AdminController::class, 'dashboard']);
-});
-
-// Dev Auth Route (Temporary)
-Flight::route('GET /dev/login', function () {
-    Flight::session()->set('user_id', 1);
-    Flight::redirect('/admin');
-});
+}, [new \app\middleware\AuthMiddleware()]);
 
 // API Routes
 Flight::group('/api', function () {
@@ -28,3 +28,4 @@ Flight::group('/api', function () {
 // Frontend Routes (Catch-all for pages)
 Flight::route('/', [FrontendController::class, 'renderPage']);
 Flight::route('/@slug', [FrontendController::class, 'renderPage']);
+

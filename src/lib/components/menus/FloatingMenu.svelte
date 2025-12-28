@@ -31,5 +31,23 @@
 </div>
 
 <style>
-    /* Let Tiptap/Tippy handle visibility */
+    /* Hide floating menu by default - Tippy will show/position it when appropriate */
+    .floating-menu {
+        visibility: hidden;
+        opacity: 0;
+    }
+
+    /* Tippy adds this attribute when showing the menu at the correct position */
+    :global([data-tippy-root]) .floating-menu,
+    :global(.tippy-box) .floating-menu {
+        visibility: visible;
+        opacity: 1;
+    }
+
+    /* When the menu is visible (controlled by Tippy), ensure it shows */
+    :global(.floating-menu-container[data-show="true"]) .floating-menu {
+        visibility: visible;
+        opacity: 1;
+    }
 </style>
+

@@ -3,39 +3,53 @@
 
 // CLI Entry Point for CerneCMS
 
+require __DIR__ . '/../vendor/autoload.php';
+
+// Minimal Flight setup for database access
+$config = require __DIR__ . '/../app/config/config.php';
+
+use app\core\Database;
+use app\commands\UserCreateCommand;
+use app\commands\CacheClearCommand;
+
+// Register DB connection manually since we aren't starting Flight
+Flight::register('db', 'PDO', ["sqlite:{$config['database_path']}"], function ($db) {
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+    $db->exec('PRAGMA foreign_keys = ON;');
+});
+
+// Init DB to ensure tables exist
+Database::init();
+
 $args = array_slice($argv, 1);
-$command = $args[0] ?? 'help';
+$commandName = $args[0] ?? 'help';
+$commandArgs = array_slice($args, 1);
+
+// Register Commands
+$commands = [
+    'user:create' => new UserCreateCommand(),
+    'cache:clear' => new CacheClearCommand(),
+];
 
 echo "CerneCMS CLI Tool\n";
 echo "-----------------\n";
 
-switch ($command) {
-    case 'cache:clear':
-        echo "Clearing cache...\n";
-        $cacheDir = __DIR__ . '/../public/cache';
-        if (is_dir($cacheDir)) {
-            $files = new RecursiveIteratorIterator(
-                new RecursiveDirectoryIterator($cacheDir, RecursiveDirectoryIterator::SKIP_DOTS),
-                RecursiveIteratorIterator::CHILD_FIRST
-            );
+if ($commandName === 'help') {
+    echo "Available commands:\n";
+    foreach ($commands as $name => $cmd) {
+        printf("  %-15s %s\n", $name, $cmd->getDescription());
+    }
+    echo "\n";
+    exit(0);
+}
 
-            foreach ($files as $fileinfo) {
-                $todo = ($fileinfo->isDir() ? 'rmdir' : 'unlink');
-                $todo($fileinfo->getRealPath());
-            }
-            // rm -rf behavior: remove the dir itself if you want, or just empty it.
-            // Keeping the dir is safer.
-            echo "✔ Cache cleared successfully.\n";
-        } else {
-            echo "✔ Cache directory does not exist (nothing to clear).\n";
-        }
-        break;
-
-    case 'help':
-    default:
-        echo "Available commands:\n";
-        echo "  cache:clear   Clear the application cache (Latte)\n";
-        break;
+if (isset($commands[$commandName])) {
+    $commands[$commandName]->execute($commandArgs);
+} else {
+    echo "Unknown command: {$commandName}\n";
+    echo "Run 'php bin/cerne help' to see available commands.\n";
+    exit(1);
 }
 
 echo "\n";

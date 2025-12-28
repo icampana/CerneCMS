@@ -62,7 +62,16 @@ Start the PHP built-in server:
 php -S 127.0.0.1:8080 -t public
 ```
 
-Access the admin panel at: `http://127.0.0.1:8080/admin`
+**Access Points:**
+- **Admin Panel**: http://127.0.0.1:8080/admin
+- **Frontend Site**: http://127.0.0.1:8080/
+
+### 4. Frontend Development (Optional)
+For hot-reload during frontend development:
+```bash
+npm run dev      # Starts Vite on port 5173+
+npm run build    # Rebuild for production (required for port 8080)
+```
 
 ## 📂 Project Structure
 

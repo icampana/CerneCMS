@@ -15,8 +15,15 @@ class AuthMiddleware
 
         $user = Flight::session()->get('user_id');
         if (!$user) {
-            Flight::halt(401, json_encode(['error' => 'Unauthorized']));
-            exit;
+            // If request is for API or JSON, return 401
+            if (Flight::request()->ajax || strpos(Flight::request()->url, '/api') === 0) {
+                Flight::halt(401, json_encode(['error' => 'Unauthorized']));
+                exit;
+            } else {
+                // Otherwise redirect to login
+                Flight::redirect('/login');
+                exit;
+            }
         }
     }
 }

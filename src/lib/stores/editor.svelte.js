@@ -41,6 +41,18 @@ import DragHandle from '@tiptap/extension-drag-handle';
         videoModalOpen = $state(false);
         videoCallback = $state(null);
 
+        // Toast Notification State
+        toastVisible = $state(false);
+        toastMessage = $state('');
+        toastType = $state('success'); // 'success' or 'error'
+
+        // Settings Drawer State
+        settingsDrawerOpen = $state(false);
+
+        // SEO Fields
+        metaTitle = $state('');
+        metaDescription = $state('');
+
         constructor() {
             // Tiptap is lazily initialized or re-configured when elements are available
             // But usually we init it once.
@@ -220,6 +232,9 @@ import DragHandle from '@tiptap/extension-drag-handle';
             this.id = data.id;
             this.title = data.title;
             this.slug = data.slug;
+            // SEO fields
+            this.metaTitle = data.meta_title || '';
+            this.metaDescription = data.meta_description || '';
             // Decode content if it's an object (from API) or use as is
             // API returns object (node) - Tiptap setContent accepts JSON object or HTML string
             this.setContent(data.content);
@@ -229,6 +244,8 @@ import DragHandle from '@tiptap/extension-drag-handle';
             this.id = null;
             this.slug = null;
             this.title = 'Untitled Page';
+            this.metaTitle = '';
+            this.metaDescription = '';
             this.setContent('<p>Start writing...</p>');
         }
 
@@ -249,7 +266,9 @@ import DragHandle from '@tiptap/extension-drag-handle';
                         title: this.title,
                         content: this.editor.getJSON(),
                         // If we have a slug, keep it, otherwise generate from title
-                        slug: this.slug || this.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
+                        slug: this.slug || this.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''),
+                        meta_title: this.metaTitle,
+                        meta_description: this.metaDescription
                     })
                 });
 
@@ -265,10 +284,11 @@ import DragHandle from '@tiptap/extension-drag-handle';
                 }
 
                 console.log('Saved:', result);
+                this.showToast('Page saved successfully', 'success');
                 return result;
             } catch (e) {
                 console.error('Save error:', e);
-                alert('Failed to save page');
+                this.showToast('Failed to save page', 'error');
             } finally {
                 this.isSaving = false;
             }
@@ -306,6 +326,30 @@ import DragHandle from '@tiptap/extension-drag-handle';
                 this.videoCallback(url);
             }
             this.closeVideoModal();
+        }
+
+        // Toast Methods
+        showToast(message, type = 'success') {
+            this.toastMessage = message;
+            this.toastType = type;
+            this.toastVisible = true;
+            // Auto-hide after 3 seconds
+            setTimeout(() => {
+                this.hideToast();
+            }, 3000);
+        }
+
+        hideToast() {
+            this.toastVisible = false;
+        }
+
+        // Settings Drawer Methods
+        openSettingsDrawer() {
+            this.settingsDrawerOpen = true;
+        }
+
+        closeSettingsDrawer() {
+            this.settingsDrawerOpen = false;
         }
     }
 

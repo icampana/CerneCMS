@@ -1,9 +1,12 @@
 <script>
     import { onMount, onDestroy } from 'svelte';
+    import { Breadcrumb, BreadcrumbItem } from 'flowbite-svelte';
+    import { CogOutline } from 'flowbite-svelte-icons';
     import { editorStore } from '../stores/editor.svelte.js';
     import BubbleMenu from './menus/BubbleMenu.svelte';
     import FloatingMenu from './menus/FloatingMenu.svelte';
     import ComponentToolbar from './ComponentToolbar.svelte';
+    import PageSettingsDrawer from './PageSettingsDrawer.svelte';
 
     let { pageId = null, onBack } = $props();
 
@@ -58,6 +61,21 @@
 
     <!-- Header / Toolbar -->
     <div class="bg-white border-b border-gray-200 p-4 sticky top-0 z-20">
+        <!-- Breadcrumb Navigation -->
+        <div class="flex items-center justify-between mb-3">
+            <Breadcrumb aria-label="Page navigation">
+                <BreadcrumbItem href="#" onclick={(e) => { e.preventDefault(); onBack(); }} home>Pages</BreadcrumbItem>
+                <BreadcrumbItem>{editorStore.title || 'New Page'}</BreadcrumbItem>
+            </Breadcrumb>
+            <button
+                onclick={() => editorStore.openSettingsDrawer()}
+                class="p-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition-colors"
+                title="Page Settings"
+            >
+                <CogOutline class="w-5 h-5" />
+            </button>
+        </div>
+
         <!-- Title Input -->
         <input
             type="text"
@@ -65,9 +83,6 @@
             placeholder="Page Title"
             class="w-full text-3xl font-bold text-gray-800 border-none focus:ring-0 placeholder-gray-300 bg-transparent px-0"
         />
-        <div class="text-sm text-gray-400 mt-1">
-             /{editorStore.slug || 'slug'}
-        </div>
     </div>
 
     <!-- Component Toolbar (Sticky below header) -->
@@ -94,3 +109,7 @@
         min-height: 500px;
     }
 </style>
+
+<!-- Settings Drawer -->
+<PageSettingsDrawer />
+

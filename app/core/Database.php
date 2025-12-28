@@ -67,5 +67,21 @@ class Database
 
             $db->exec("CREATE INDEX idx_posts_slug ON posts(slug)");
         }
+        // Check if 'users' table exists
+        $stmt = $db->query("SELECT name FROM sqlite_master WHERE type='table' AND name='users'");
+
+        if (!$stmt->fetch()) {
+            // Create users table
+            $db->exec("CREATE TABLE users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                username TEXT UNIQUE NOT NULL,
+                email TEXT UNIQUE NOT NULL,
+                password_hash TEXT NOT NULL,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            )");
+
+            $db->exec("CREATE INDEX idx_users_username ON users(username)");
+            $db->exec("CREATE INDEX idx_users_email ON users(email)");
+        }
     }
 }

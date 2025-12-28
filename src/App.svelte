@@ -4,6 +4,8 @@
     import DataGrid from './lib/components/DataGrid.svelte';
     import MediaManager from './lib/components/MediaManager.svelte';
     import VideoModal from './lib/components/modals/VideoModal.svelte';
+    import { Toast } from 'flowbite-svelte';
+    import { CheckCircleSolid, CloseCircleSolid } from 'flowbite-svelte-icons';
     import { editorStore } from './lib/stores/editor.svelte.js';
 
     // State
@@ -80,4 +82,24 @@
 <!-- Global Video Modal -->
 {#if editorStore.videoModalOpen}
     <VideoModal />
+{/if}
+
+<!-- Global Toast Notification -->
+{#if editorStore.toastVisible}
+    <div class="fixed bottom-4 right-4 z-[100]">
+        <Toast
+            color={editorStore.toastType === 'success' ? 'green' : 'red'}
+            dismissable
+            onclick={() => editorStore.hideToast()}
+        >
+            {#snippet icon()}
+                {#if editorStore.toastType === 'success'}
+                    <CheckCircleSolid class="w-5 h-5" />
+                {:else}
+                    <CloseCircleSolid class="w-5 h-5" />
+                {/if}
+            {/snippet}
+            {editorStore.toastMessage}
+        </Toast>
+    </div>
 {/if}
