@@ -10,7 +10,8 @@
     import { Youtube } from '@tiptap/extension-youtube';
     import { TextAlign } from '@tiptap/extension-text-align';
     import { HorizontalRule } from '@tiptap/extension-horizontal-rule';
-import Grid from '../extensions/Grid';
+    import CalendarExtension from '../editor/extensions/Calendar.js'; // Import Calendar Extension
+    import Grid from '../extensions/Grid';
 import Column from '../extensions/Column';
 import DragHandle from '@tiptap/extension-drag-handle';
     import { SvelteNodeViewRenderer } from 'svelte-tiptap';
@@ -89,6 +90,7 @@ import DragHandle from '@tiptap/extension-drag-handle';
                     Grid,
                     Column,
                     HorizontalRule,
+                    CalendarExtension, // Add to extensions list
                     Table.configure({
                         resizable: true,
                         HTMLAttributes: {
@@ -199,6 +201,8 @@ import DragHandle from '@tiptap/extension-drag-handle';
                                 });
                             } else if (type === 'divider') {
                                 view.dispatch(view.state.tr.insert(pos, view.state.schema.nodes.horizontalRule.create()));
+                            } else if (type === 'calendar') {
+                                view.dispatch(view.state.tr.insert(pos, view.state.schema.nodes.fullCalendar.create({ showAllCalendars: false })));
                             } else if (type === 'heading') {
                                 view.dispatch(view.state.tr.insert(pos, view.state.schema.nodes.heading.create({ level: 2 }, view.state.schema.text('Heading 2'))));
                             } else {

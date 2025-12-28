@@ -23,6 +23,10 @@
         "vite": "^5.0.0"
     },
     "dependencies": {
+        "@fullcalendar/core": "^6.1.20",
+        "@fullcalendar/daygrid": "^6.1.20",
+        "@fullcalendar/interaction": "^6.1.20",
+        "@fullcalendar/timegrid": "^6.1.20",
         "@tiptap/core": "^3.14.0",
         "@tiptap/extension-bubble-menu": "^3.14.0",
         "@tiptap/extension-drag-handle": "^3.14.0",
@@ -38,6 +42,7 @@
         "@tiptap/extension-text-align": "^3.14.0",
         "@tiptap/extension-youtube": "^3.14.0",
         "@tiptap/starter-kit": "^3.14.0",
+        "fullcalendar": "^6.1.20",
         "svelte-tiptap": "^3.0.1",
         "tippy.js": "^6.3.7"
     }

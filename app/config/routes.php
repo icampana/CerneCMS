@@ -23,6 +23,12 @@ Flight::group('/api', function () {
     Flight::route('POST /pages', [ApiController::class, 'savePage']);
     Flight::route('GET /media', [ApiController::class, 'getMedia']);
     Flight::route('POST /media', [ApiController::class, 'uploadMedia']);
+
+    // Calendar Routes
+    Flight::route('GET /calendar/events', [app\controllers\CalendarController::class, 'getEvents']);
+    Flight::route('POST /calendar/events', [app\controllers\CalendarController::class, 'addEvent']);
+    Flight::route('PUT /calendar/events/@id', [app\controllers\CalendarController::class, 'updateEvent']);
+    Flight::route('DELETE /calendar/events/@id', [app\controllers\CalendarController::class, 'deleteEvent']);
 }, [new \app\middleware\AuthMiddleware()]);
 
 // Frontend Routes (Catch-all for pages)

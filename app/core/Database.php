@@ -83,5 +83,28 @@ class Database
             $db->exec("CREATE INDEX idx_users_username ON users(username)");
             $db->exec("CREATE INDEX idx_users_email ON users(email)");
         }
+
+        // Check if 'calendar_events' table exists
+        $stmt = $db->query("SELECT name FROM sqlite_master WHERE type='table' AND name='calendar_events'");
+
+        if (!$stmt->fetch()) {
+            // Create calendar_events table
+            $db->exec("CREATE TABLE calendar_events (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                title TEXT NOT NULL,
+                start_date DATETIME NOT NULL,
+                end_date DATETIME,
+                url TEXT,
+                image TEXT,
+                description TEXT,
+                color TEXT DEFAULT '#000000',
+                is_visible INTEGER DEFAULT 1,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            )");
+
+            // $db->exec("CREATE INDEX idx_calendar_events_widget_id ON calendar_events(widget_id)"); // Removed
+            $db->exec("CREATE INDEX idx_calendar_events_start_date ON calendar_events(start_date)");
+        }
     }
 }

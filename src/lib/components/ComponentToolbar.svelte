@@ -6,7 +6,8 @@
         TextSizeOutline,
         TableColumnSolid,
         VideoCameraSolid,
-        MinusOutline
+        MinusOutline,
+        CalendarMonthSolid
     } from 'flowbite-svelte-icons';
     import { editorStore } from '../stores/editor.svelte.js';
 
@@ -19,6 +20,7 @@
         { type: 'table', label: 'Table', icon: TableColumnSolid, action: 'table' },
         { type: 'video', label: 'Video', icon: VideoCameraSolid, action: 'video' },
         { type: 'divider', label: 'Divider', icon: MinusOutline, action: 'divider' },
+        { type: 'calendar', label: 'Calendar', icon: CalendarMonthSolid, action: 'calendar' },
     ];
 
     const handleDragStart = (event, type) => {
@@ -44,6 +46,8 @@
             });
         } else if (comp.action === 'divider') {
             editorStore.editor.chain().focus().setHorizontalRule().run();
+        } else if (comp.action === 'calendar') {
+             editorStore.editor.chain().focus().insertContent({ type: 'fullCalendar', attrs: { showAllCalendars: false } }).run();
         }
     };
 </script>
