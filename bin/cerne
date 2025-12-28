@@ -35,8 +35,20 @@ $commands = [
 echo "CerneCMS CLI Tool\n";
 echo "-----------------\n";
 
+// Special command: serve (start PHP built-in server)
+if ($commandName === 'serve') {
+    $port = $commandArgs[0] ?? '8080';
+    $docRoot = __DIR__ . '/../public';
+    echo "Starting development server at http://localhost:{$port}\n";
+    echo "Document root: {$docRoot}\n";
+    echo "Press Ctrl+C to stop.\n\n";
+    passthru("php -S localhost:{$port} -t " . escapeshellarg($docRoot));
+    exit(0);
+}
+
 if ($commandName === 'help') {
     echo "Available commands:\n";
+    printf("  %-15s %s\n", 'serve [port]', 'Start development server (default: 8080)');
     foreach ($commands as $name => $cmd) {
         printf("  %-15s %s\n", $name, $cmd->getDescription());
     }
