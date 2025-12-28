@@ -73,6 +73,7 @@
                             rows="3"
                             bind:value={editorStore.metaDescription}
                             placeholder="Brief description for search results"
+                            class="w-full"
                         />
                         <p class="text-xs text-gray-500 mt-1">
                             Recommended: 150-160 characters. {editorStore.metaDescription?.length || 0}/160
