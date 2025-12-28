@@ -134,6 +134,7 @@ import DragHandle from '@tiptap/extension-drag-handle';
                         placement: 'top',
                         maxWidth: 'none',
                         offset: [0, 10],
+                        appendTo: document.body,
                     },
                 })
             ],

@@ -50,7 +50,7 @@
     <!-- Refactored approach: We define the menu containers HERE so we have the refs,
          and pass them to the store. The components just hold the buttons. -->
 
-    <div bind:this={bubbleMenuEl} class="bubble-menu-container z-50">
+    <div bind:this={bubbleMenuEl} class="bubble-menu-container absolute top-0 left-0 z-50 invisible">
         <BubbleMenu />
     </div>
 
