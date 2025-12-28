@@ -4,7 +4,7 @@
     import { CogOutline } from 'flowbite-svelte-icons';
     import { editorStore } from '../stores/editor.svelte.js';
     import BubbleMenu from './menus/BubbleMenu.svelte';
-    import FloatingMenu from './menus/FloatingMenu.svelte';
+    import BlockOptionsMenu from './menus/BlockOptionsMenu.svelte';
     import ComponentToolbar from './ComponentToolbar.svelte';
     import PageSettingsDrawer from './PageSettingsDrawer.svelte';
 
@@ -12,12 +12,11 @@
 
     let element;
     let bubbleMenuEl = $state(null);
-    let floatingMenuEl = $state(null);
 
     onMount(async () => {
         // Init Editor
         setTimeout(() => {
-             editorStore.init(element, bubbleMenuEl, floatingMenuEl);
+             editorStore.init(element, bubbleMenuEl);
         }, 0);
 
         // Load Data if pageId is present
@@ -55,9 +54,7 @@
         <BubbleMenu />
     </div>
 
-    <div bind:this={floatingMenuEl} class="floating-menu-container">
-        <FloatingMenu />
-    </div>
+    <BlockOptionsMenu />
 
     <!-- Header / Toolbar -->
     <div class="bg-white border-b border-gray-200 p-4 sticky top-0 z-20">

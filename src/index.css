@@ -25,6 +25,7 @@
 }
 
 /* Global Drag Handle Styles */
+/* Global Drag Handle Styles */
 .drag-handle {
     width: 1.5rem;
     height: 1.5rem;
@@ -38,6 +39,22 @@
     z-index: 50;
 
     pointer-events: auto !important;
+
+    /* Hide initially to prevent phantom handle at (0,0) */
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+/* Tiptap DragHandle likely doesn't verify opacity, but let's assume it manages visibility?
+   Actually, if I hide it, I need a way to show it.
+   Common pattern: Show when hovering the editor line?
+   Or rely on the fact that when it moves, we show it?
+   I'll try a safe approach: Only show if it has a 'top' style set (meaning it's positioned).
+   CSS Attribute selector!
+*/
+
+.drag-handle[style*="top"] {
+    opacity: 1;
 }
 
 /* Force visibility when parent has specific class? No, extension toggles it. */

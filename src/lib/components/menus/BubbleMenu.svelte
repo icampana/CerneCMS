@@ -9,7 +9,7 @@
 
 </script>
 
-<div bind:this={element} class="bubble-menu flex bg-white border border-gray-200 shadow-lg rounded-lg overflow-hidden p-1 gap-1">
+<div bind:this={element} class="bubble-menu flex bg-white border border-gray-200 shadow-lg rounded-lg overflow-hidden p-1 gap-1 {editorStore.editor ? '' : 'invisible'}">
     {#if editorStore.editor}
         <button
             onclick={() => editorStore.editor.chain().focus().toggleBold().run()}

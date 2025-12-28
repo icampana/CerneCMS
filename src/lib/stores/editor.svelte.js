@@ -2,7 +2,6 @@
     import { Editor } from '@tiptap/core';
     import StarterKit from '@tiptap/starter-kit';
     import BubbleMenuExtension from '@tiptap/extension-bubble-menu';
-    import FloatingMenuExtension from '@tiptap/extension-floating-menu';
     import Image from '@tiptap/extension-image';
     import { Table } from '@tiptap/extension-table';
     import { TableRow } from '@tiptap/extension-table-row';
@@ -35,7 +34,12 @@ import DragHandle from '@tiptap/extension-drag-handle';
 
         // Track menu elements
         bubbleMenuElement = $state(null);
-        floatingMenuElement = $state(null);
+
+        // Block Options Menu State
+        blockMenuOpen = $state(false);
+        blockMenuTarget = $state(null);
+        // Store the block range for menu actions
+        currentBlockRange = $state(null);
 
         // Video Modal State
         videoModalOpen = $state(false);
@@ -66,7 +70,7 @@ import DragHandle from '@tiptap/extension-drag-handle';
             // Simpler approach: We expose a `init` method that the Component calls when ready.
         }
 
-        init(element, bubbleMenuEl, floatingMenuEl) {
+        init(element, bubbleMenuEl) {
              if (this.editor) return;
 
              this.editor = new Editor({
@@ -116,15 +120,21 @@ import DragHandle from '@tiptap/extension-drag-handle';
                     render: () => {
                         const element = document.createElement('div');
                         element.classList.add('drag-handle');
+                        // Attach click listener for block menu
+                        element.addEventListener('click', (e) => {
+                             this.handleDragHandleClick(e, element);
+                        });
                         return element;
                     },
                 }),
 
                 BubbleMenuExtension.configure({
                     element: bubbleMenuEl,
-                }),
-                FloatingMenuExtension.configure({
-                    element: floatingMenuEl,
+                    tippyOptions: {
+                        placement: 'top',
+                        maxWidth: 'none',
+                        offset: [0, 10],
+                    },
                 })
             ],
             editorProps: {
@@ -351,6 +361,85 @@ import DragHandle from '@tiptap/extension-drag-handle';
         closeSettingsDrawer() {
             this.settingsDrawerOpen = false;
         }
+
+        handleDragHandleClick(event, element) {
+            // Prevent immediate closing due to outside click logic usually
+            event.stopPropagation();
+
+            this.blockMenuTarget = element;
+            this.blockMenuOpen = !this.blockMenuOpen;
+            this.currentBlockRange = null;
+
+            // Try to set selection to the block associated with the handle
+            if (this.editor && element && this.blockMenuOpen) {
+                const rect = element.getBoundingClientRect();
+                // Check slightly to the right of the handle center to find the node
+                const coords = { left: rect.right + 20, top: rect.top + (rect.height / 2) };
+                const pos = this.editor.view.posAtCoords(coords);
+
+                if (pos) {
+                    const resolved = this.editor.state.doc.resolve(pos.pos);
+                    // Find the block range at depth 1 (top-level block)
+                    const blockStart = resolved.start(1);
+                    const blockEnd = resolved.end(1);
+                    const node = resolved.node(1);
+
+                    // Store for later use by menu actions
+                    this.currentBlockRange = { start: blockStart, end: blockEnd, node };
+
+                    // Focus the editor (not selecting the whole node, just positioning)
+                    this.editor.chain().focus(pos.pos).run();
+                }
+            }
+        }
+
+        closeBlockMenu() {
+            this.blockMenuOpen = false;
+        }
+
+        duplicateNode() {
+            if (!this.editor || !this.currentBlockRange) {
+                this.closeBlockMenu();
+                return;
+            }
+
+            const { end, node } = this.currentBlockRange;
+            const json = node.toJSON();
+
+            // Insert after the current block
+            this.editor.chain().insertContentAt(end + 1, json).run();
+            this.closeBlockMenu();
+        }
+
+        deleteNode() {
+            if (!this.editor || !this.currentBlockRange) {
+                this.closeBlockMenu();
+                return;
+            }
+
+            const { start, end } = this.currentBlockRange;
+
+            // Delete the entire block range
+            this.editor.chain().deleteRange({ from: start - 1, to: end + 1 }).run();
+            this.closeBlockMenu();
+        }
+
+        clearFormatting() {
+            if (!this.editor || !this.currentBlockRange) {
+                this.closeBlockMenu();
+                return;
+            }
+
+            const { start, end } = this.currentBlockRange;
+
+            // Select the block content, then clear formatting
+            this.editor.chain()
+                .setTextSelection({ from: start, to: end })
+                .unsetAllMarks()
+                .run();
+            this.closeBlockMenu();
+        }
+
     }
 
     export const editorStore = new EditorStore();
