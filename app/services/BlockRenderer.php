@@ -81,6 +81,26 @@ class BlockRenderer
             case 'column':
                 return "<div class=\"grid-column flex-1 min-w-0\">{$content}</div>";
 
+            case 'table':
+                return "<div class=\"overflow-x-auto my-4\"><table class=\"w-full text-left border-collapse\"><tbody>{$content}</tbody></table></div>";
+
+            case 'tableRow':
+                return "<tr class=\"border-b border-gray-200\">{$content}</tr>";
+
+            case 'tableHeader':
+                return "<th class=\"p-2 bg-gray-50 font-bold border border-gray-200\">{$content}</th>";
+
+            case 'tableCell':
+                return "<td class=\"p-2 border border-gray-200\">{$content}</td>";
+
+            case 'youtube':
+                $src = $node['attrs']['src'] ?? '';
+                // Ensure src is embeddable or trust input? Tiptap extension handles normalisation usually.
+                return "<div class=\"aspect-video w-full my-4 rounded-lg overflow-hidden\"><iframe src=\"{$src}\" class=\"w-full h-full\" frameborder=\"0\" allowfullscreen></iframe></div>";
+
+            case 'horizontalRule':
+                return "<hr class=\"my-8 border-gray-200\">";
+
             default:
                 // Fallback for unknown blocks (or just ignore)
                 return $content;

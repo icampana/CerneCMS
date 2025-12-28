@@ -4,6 +4,13 @@
     import BubbleMenuExtension from '@tiptap/extension-bubble-menu';
     import FloatingMenuExtension from '@tiptap/extension-floating-menu';
     import Image from '@tiptap/extension-image';
+    import { Table } from '@tiptap/extension-table';
+    import { TableRow } from '@tiptap/extension-table-row';
+    import { TableCell } from '@tiptap/extension-table-cell';
+    import { TableHeader } from '@tiptap/extension-table-header';
+    import { Youtube } from '@tiptap/extension-youtube';
+    import { TextAlign } from '@tiptap/extension-text-align';
+    import { HorizontalRule } from '@tiptap/extension-horizontal-rule';
 import Grid from '../extensions/Grid';
 import Column from '../extensions/Column';
 import DragHandle from '@tiptap/extension-drag-handle';
@@ -29,6 +36,10 @@ import DragHandle from '@tiptap/extension-drag-handle';
         // Track menu elements
         bubbleMenuElement = $state(null);
         floatingMenuElement = $state(null);
+
+        // Video Modal State
+        videoModalOpen = $state(false);
+        videoCallback = $state(null);
 
         constructor() {
             // Tiptap is lazily initialized or re-configured when elements are available
@@ -59,9 +70,37 @@ import DragHandle from '@tiptap/extension-drag-handle';
                         return SvelteNodeViewRenderer(ImageBlock);
                     }
                 }),
-                Grid,
-                Column,
-                DragHandle.configure({
+                    Grid,
+                    Column,
+                    HorizontalRule,
+                    Table.configure({
+                        resizable: true,
+                        HTMLAttributes: {
+                            class: 'border-collapse table-auto w-full my-4',
+                        },
+                    }),
+                    TableRow,
+                    TableHeader.configure({
+                         HTMLAttributes: {
+                            class: 'border border-gray-300 bg-gray-50 p-2 font-bold text-left',
+                        },
+                    }),
+                    TableCell.configure({
+                        HTMLAttributes: {
+                            class: 'border border-gray-300 p-2 relative',
+                        },
+                    }),
+                    Youtube.configure({
+                        controls: false,
+                        nocookie: true,
+                         HTMLAttributes: {
+                            class: 'w-full aspect-video rounded-lg shadow-sm',
+                        },
+                    }),
+                    TextAlign.configure({
+                        types: ['heading', 'paragraph'],
+                    }),
+                    DragHandle.configure({
                     render: () => {
                         const element = document.createElement('div');
                         element.classList.add('drag-handle');
@@ -114,6 +153,29 @@ import DragHandle from '@tiptap/extension-drag-handle';
                                     view.state.schema.nodes.column.create(null, [view.state.schema.nodes.paragraph.create()]),
                                     view.state.schema.nodes.column.create(null, [view.state.schema.nodes.paragraph.create()])
                                 ])));
+                            } else if (type === 'table') {
+                                view.dispatch(view.state.tr.insert(pos, view.state.schema.nodes.table.create(null, [
+                                    view.state.schema.nodes.tableRow.create(null, [
+                                        view.state.schema.nodes.tableHeader.create(null, view.state.schema.nodes.paragraph.create()),
+                                        view.state.schema.nodes.tableHeader.create(null, view.state.schema.nodes.paragraph.create({ text: '' })),
+                                        view.state.schema.nodes.tableHeader.create(null, view.state.schema.nodes.paragraph.create({ text: '' }))
+                                    ]),
+                                    view.state.schema.nodes.tableRow.create(null, [
+                                        view.state.schema.nodes.tableCell.create(null, view.state.schema.nodes.paragraph.create()),
+                                        view.state.schema.nodes.tableCell.create(null, view.state.schema.nodes.paragraph.create()),
+                                        view.state.schema.nodes.tableCell.create(null, view.state.schema.nodes.paragraph.create())
+                                    ])
+                                ])));
+                                // Note: Simple 3x2 table creation manually since insertTable command is transactional on selection
+                            } else if (type === 'video') {
+                                // Use Modal for better UX and reliability
+                                this.openVideoModal((url) => {
+                                    // Use the captured view and pos from the closure
+                                    const tr = view.state.tr.insert(pos, view.state.schema.nodes.youtube.create({ src: url }));
+                                    view.dispatch(tr);
+                                });
+                            } else if (type === 'divider') {
+                                view.dispatch(view.state.tr.insert(pos, view.state.schema.nodes.horizontalRule.create()));
                             } else if (type === 'heading') {
                                 view.dispatch(view.state.tr.insert(pos, view.state.schema.nodes.heading.create({ level: 2 }, view.state.schema.text('Heading 2'))));
                             } else {
@@ -227,6 +289,23 @@ import DragHandle from '@tiptap/extension-drag-handle';
                 this.mediaSelectCallback(url);
             }
             this.closeMediaLibrary();
+        }
+
+        openVideoModal(callback) {
+            this.videoCallback = callback;
+            this.videoModalOpen = true;
+        }
+
+        closeVideoModal() {
+            this.videoModalOpen = false;
+            this.videoCallback = null;
+        }
+
+        confirmVideo(url) {
+            if (this.videoCallback) {
+                this.videoCallback(url);
+            }
+            this.closeVideoModal();
         }
     }
 

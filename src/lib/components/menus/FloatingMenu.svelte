@@ -1,41 +1,31 @@
 <script>
-    import { onMount } from 'svelte';
     import { editorStore } from '../../stores/editor.svelte.js';
 
     let element;
-
-    const addImage = () => {
-        editorStore.openMediaLibrary((url) => {
-             editorStore.editor.chain().focus().setImage({ src: url }).run();
-        });
-    }
 </script>
 
-<div bind:this={element} class="floating-menu flex gap-1 items-center">
+<div bind:this={element} class="floating-menu flex gap-1 items-center bg-white p-1 rounded-lg border border-gray-200 shadow-lg">
     {#if editorStore.editor}
         <button
             onclick={() => editorStore.editor.chain().focus().toggleHeading({ level: 1 }).run()}
-            class="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-sm text-gray-700 border border-gray-300 shadow-sm"
+            class="px-2 py-1 hover:bg-gray-100 rounded text-sm text-gray-700 font-bold"
+            title="Heading 1"
         >
             H1
         </button>
         <button
             onclick={() => editorStore.editor.chain().focus().toggleHeading({ level: 2 }).run()}
-            class="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-sm text-gray-700 border border-gray-300 shadow-sm"
+            class="px-2 py-1 hover:bg-gray-100 rounded text-sm text-gray-700 font-bold"
+            title="Heading 2"
         >
             H2
         </button>
         <button
             onclick={() => editorStore.editor.chain().focus().toggleBulletList().run()}
-            class="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-sm text-gray-700 border border-gray-300 shadow-sm"
+            class="px-2 py-1 hover:bg-gray-100 rounded text-sm text-gray-700"
+            title="Bullet List"
         >
             List
-        </button>
-        <button
-            onclick={addImage}
-            class="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-sm text-gray-700 border border-gray-300 shadow-sm"
-        >
-            Img
         </button>
     {/if}
 </div>

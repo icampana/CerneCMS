@@ -3,6 +3,7 @@
     import Navbar from './lib/components/Navbar.svelte';
     import DataGrid from './lib/components/DataGrid.svelte';
     import MediaManager from './lib/components/MediaManager.svelte';
+    import VideoModal from './lib/components/modals/VideoModal.svelte';
     import { editorStore } from './lib/stores/editor.svelte.js';
 
     // State
@@ -74,4 +75,9 @@
             />
         </div>
     </div>
+{/if}
+
+<!-- Global Video Modal -->
+{#if editorStore.videoModalOpen}
+    <VideoModal />
 {/if}
