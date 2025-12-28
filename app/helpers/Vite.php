@@ -4,19 +4,40 @@ namespace app\helpers;
 
 class Vite
 {
+    /**
+     * Determine if we are in development mode.
+     */
+    private static function isDev()
+    {
+        $manifestPath = __DIR__ . '/../../public/assets/.vite/manifest.json';
+        $devFlagFile = __DIR__ . '/../../.dev';
+
+        // Check multiple sources for dev mode:
+        // 1. .dev file exists in project root
+        // 2. VITE_DEV env variable
+        // 3. No manifest file exists
+        $viteDev = getenv('VITE_DEV') ?: ($_ENV['VITE_DEV'] ?? ($_SERVER['VITE_DEV'] ?? 'false'));
+
+        // Debug logging to terminal
+        // error_log("VITE_DEV env var: " . var_export($viteDev, true));
+
+        return file_exists($devFlagFile) || $viteDev === 'true' || !file_exists($manifestPath);
+    }
+
     public static function asset($entry)
     {
         $manifestPath = __DIR__ . '/../../public/assets/.vite/manifest.json';
 
-        // Development Mode: Hot Module Replacement (HMR)
-        if (!file_exists($manifestPath)) {
+        if (self::isDev()) {
             return "http://localhost:5173/src/{$entry}";
         }
 
         // Production Mode: Read from Manifest
-        $manifest = json_decode(file_get_contents($manifestPath), true);
-        if (isset($manifest["src/{$entry}"])) {
-            return '/assets/' . $manifest["src/{$entry}"]['file'];
+        if (file_exists($manifestPath)) {
+            $manifest = json_decode(file_get_contents($manifestPath), true);
+            if (isset($manifest["src/{$entry}"])) {
+                return '/assets/' . $manifest["src/{$entry}"]['file'];
+            }
         }
 
         return '';
@@ -25,6 +46,14 @@ class Vite
     public static function css($entry)
     {
         $manifestPath = __DIR__ . '/../../public/assets/.vite/manifest.json';
+
+        if (self::isDev()) {
+            // In dev mode, CSS is usually injected by Vite JS client, so we might not need explicit CSS links,
+            // or we might want to return nothing if Vite handles it.
+            // However, if we need to return something, it would be empty array as Vite client handles CSS import.
+            return [];
+        }
+
         if (file_exists($manifestPath)) {
             $manifest = json_decode(file_get_contents($manifestPath), true);
             if (isset($manifest["src/{$entry}"]) && isset($manifest["src/{$entry}"]['css'])) {
@@ -35,17 +64,13 @@ class Vite
         }
         return [];
     }
+
     /**
      * Output the HTML tags for Vite assets (JS + CSS)
      */
     public static function assets()
     {
-        $manifestPath = __DIR__ . '/../../public/assets/.vite/manifest.json';
-
-        // Check env variable first, then fall back to manifest check
-        $isDev = getenv('VITE_DEV') === 'true' || !file_exists($manifestPath);
-
-        if ($isDev) {
+        if (self::isDev()) {
             return '
                 <script type="module" src="http://localhost:5173/@vite/client"></script>
                 <script type="module" src="http://localhost:5173/src/main.js"></script>
