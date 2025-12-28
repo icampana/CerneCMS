@@ -41,7 +41,9 @@ class Vite
     public static function assets()
     {
         $manifestPath = __DIR__ . '/../../public/assets/.vite/manifest.json';
-        $isDev = !file_exists($manifestPath);
+
+        // Check env variable first, then fall back to manifest check
+        $isDev = getenv('VITE_DEV') === 'true' || !file_exists($manifestPath);
 
         if ($isDev) {
             return '

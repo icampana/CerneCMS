@@ -4,6 +4,7 @@
     "type": "module",
     "scripts": {
         "dev": "vite",
+        "dev:serve": "VITE_DEV=true php -S localhost:8080 -t public",
         "build": "vite build",
         "preview": "vite preview"
     },
