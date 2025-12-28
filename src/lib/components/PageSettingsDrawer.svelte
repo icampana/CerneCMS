@@ -16,6 +16,7 @@
     placement="right"
     width="w-96"
     class="bg-white dark:bg-gray-800 p-0"
+    on:close={() => editorStore.closeSettingsDrawer()}
 >
     <div class="flex flex-col h-full">
         <!-- Header -->
@@ -24,12 +25,6 @@
                 <CogOutline class="w-5 h-5" />
                 Page Settings
             </h5>
-            <button
-                onclick={() => editorStore.closeSettingsDrawer()}
-                class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full text-gray-500"
-            >
-                ✕
-            </button>
         </div>
 
         <!-- Content -->
