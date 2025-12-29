@@ -64,11 +64,9 @@
             {if function_exists('breadcrumbs')}
                 {breadcrumbs($page)|noescape}
             {/if}
-            {include content}
+            {block content}{/block}
         </main>
     </div>
-
-    {block content}{/block}
 
     <footer class="mt-20 py-8 text-center text-sm text-gray-400 border-t border-gray-100">
         Built with CerneCMS (FlightPHP + Svelte)
