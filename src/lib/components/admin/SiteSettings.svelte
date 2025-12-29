@@ -1,6 +1,7 @@
 <script>
     import { onMount } from 'svelte';
-    import { Button, Label, Select, Toggle, Heading } from 'flowbite-svelte';
+    import { Button, Label, Select, Toggle, Heading, Sidebar, SidebarGroup, SidebarItem, SidebarWrapper } from 'flowbite-svelte';
+    import { CogSolid, GlobeSolid, ImageSolid, DesktopPcSolid, LockSolid } from 'flowbite-svelte-icons';
 
     let settings = $state({
         sidebar_enabled: 'internal' // all, internal, none
@@ -8,6 +9,7 @@
 
     let loading = $state(false);
     let saved = $state(false);
+    let activeTab = $state('general');
 
     const sidebarOptions = [
         { value: 'all', name: 'Enabled on All Pages' },
@@ -78,106 +80,162 @@
     }
 </script>
 
-<div class="max-w-3xl mx-auto space-y-6 pb-12">
-    <!-- General Settings -->
-    <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100">
-        <div class="mb-8 border-b pb-4">
-            <Heading tag="h2" class="text-xl font-bold">General Settings</Heading>
-            <p class="text-gray-500 text-sm mt-1">Basic information about your website.</p>
+<div class="max-w-6xl mx-auto pb-12">
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <!-- Sidebar Navigation -->
+        <div class="lg:col-span-1">
+            <Sidebar class="w-full" position="static">
+                <SidebarWrapper class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+                    <SidebarGroup>
+                        <SidebarItem label="General" onclick={() => activeTab = 'general'} active={activeTab === 'general'}>
+                            {#snippet icon()}
+                                <CogSolid class="w-5 h-5 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white" />
+                            {/snippet}
+                        </SidebarItem>
+                        <SidebarItem label="Localization" onclick={() => activeTab = 'localization'} active={activeTab === 'localization'}>
+                            {#snippet icon()}
+                                <GlobeSolid class="w-5 h-5 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white" />
+                            {/snippet}
+                        </SidebarItem>
+                        <SidebarItem label="Branding" onclick={() => activeTab = 'branding'} active={activeTab === 'branding'}>
+                            {#snippet icon()}
+                                <ImageSolid class="w-5 h-5 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white" />
+                            {/snippet}
+                        </SidebarItem>
+                        <SidebarItem label="Interface" onclick={() => activeTab = 'interface'} active={activeTab === 'interface'}>
+                            {#snippet icon()}
+                                <DesktopPcSolid class="w-5 h-5 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white" />
+                            {/snippet}
+                        </SidebarItem>
+                        <SidebarItem label="Maintenance" onclick={() => activeTab = 'maintenance'} active={activeTab === 'maintenance'}>
+                            {#snippet icon()}
+                                <LockSolid class="w-5 h-5 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white" />
+                            {/snippet}
+                        </SidebarItem>
+                    </SidebarGroup>
+                </SidebarWrapper>
+            </Sidebar>
         </div>
 
-        <div class="space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="space-y-2">
-                    <Label for="site-name" class="font-semibold">Site Name</Label>
-                    <input id="site-name" type="text" class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500" bind:value={settings.site_name} />
-                </div>
-                <div class="space-y-2">
-                    <Label for="site-currency" class="font-semibold">Site Currency</Label>
-                    <input id="site-currency" type="text" class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500" bind:value={settings.site_currency} placeholder="e.g. USD, EUR, GBP" />
-                </div>
+        <!-- Content Area -->
+        <div class="lg:col-span-3 space-y-6">
+            <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 min-h-[500px] relative">
+
+                {#if activeTab === 'general'}
+                    <div class="mb-8 border-b pb-4">
+                        <Heading tag="h2" class="text-xl font-bold">General Settings</Heading>
+                        <p class="text-gray-500 text-sm mt-1">Basic information about your website.</p>
+                    </div>
+                    <div class="space-y-6">
+                        <div class="space-y-2">
+                            <Label for="site-name" class="font-semibold">Site Name</Label>
+                            <input id="site-name" type="text" class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500" bind:value={settings.site_name} />
+                        </div>
+                        <div class="space-y-2">
+                            <Label for="site-description" class="font-semibold">Site Description (SEO)</Label>
+                            <textarea id="site-description" rows="3" class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500" bind:value={settings.site_description}></textarea>
+                        </div>
+                    </div>
+                {/if}
+
+                {#if activeTab === 'localization'}
+                    <div class="mb-8 border-b pb-4">
+                        <Heading tag="h2" class="text-xl font-bold">Localization</Heading>
+                        <p class="text-gray-500 text-sm mt-1">Manage language, time, and currency settings.</p>
+                    </div>
+                    <div class="space-y-6">
+                        <div class="space-y-2">
+                            <Label for="site-currency" class="font-semibold">Site Currency</Label>
+                            <input id="site-currency" type="text" class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500" bind:value={settings.site_currency} placeholder="e.g. USD, EUR, GBP" />
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-2">
+                                <Label for="site-language" class="font-semibold">Site Language</Label>
+                                <Select id="site-language" items={languageOptions} bind:value={settings.site_language} />
+                            </div>
+                            <div class="space-y-2">
+                                <Label for="site-timezone" class="font-semibold">Site Timezone</Label>
+                                <Select id="site-timezone" items={timezoneOptions} bind:value={settings.site_timezone} />
+                            </div>
+                        </div>
+                    </div>
+                {/if}
+
+                {#if activeTab === 'branding'}
+                    <div class="mb-8 border-b pb-4">
+                        <Heading tag="h2" class="text-xl font-bold">Branding</Heading>
+                        <p class="text-gray-500 text-sm mt-1">Upload and manage site logos and icons.</p>
+                    </div>
+                    <div class="space-y-6">
+                        <div class="space-y-2">
+                            <Label for="site-logo" class="font-semibold">Site Logo URL</Label>
+                            <input id="site-logo" type="text" class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500" bind:value={settings.site_logo} placeholder="/uploads/logo.png" />
+                        </div>
+                        <div class="space-y-2">
+                            <Label for="site-favicon" class="font-semibold">Site Favicon URL</Label>
+                            <input id="site-favicon" type="text" class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500" bind:value={settings.site_favicon} placeholder="/favicon.ico" />
+                        </div>
+                    </div>
+                {/if}
+
+                {#if activeTab === 'interface'}
+                    <div class="mb-8 border-b pb-4">
+                        <Heading tag="h2" class="text-xl font-bold">Interface & Layout</Heading>
+                        <p class="text-gray-500 text-sm mt-1">Control how the frontend looks and behaves.</p>
+                    </div>
+                    <div class="space-y-6">
+                        <div>
+                            <Label for="sidebar-mode" class="mb-2 text-base font-semibold">Sidebar Visibility</Label>
+                            <p class="text-xs text-gray-500 mb-3">
+                                Controls where the sidebar (containing local navigation) is displayed.
+                                You can override this on a per-page basis in the page editor.
+                            </p>
+                            <Select id="sidebar-mode" items={sidebarOptions} bind:value={settings.sidebar_enabled} />
+                        </div>
+                    </div>
+                {/if}
+
+                {#if activeTab === 'maintenance'}
+                    <div class="mb-8 border-b pb-4">
+                        <Heading tag="h2" class="text-xl font-bold text-red-600">Maintenance Mode</Heading>
+                        <p class="text-gray-500 text-sm mt-1">Take the site offline for all users except administrators.</p>
+                    </div>
+                    <div class="space-y-6">
+                        <div class="flex items-center justify-between p-4 bg-red-50 rounded-lg border border-red-100">
+                            <div>
+                                <span class="font-semibold text-red-800">Enable Maintenance Mode</span>
+                                <p class="text-sm text-red-600">When enabled, visitors will see the maintenance message.</p>
+                            </div>
+                            <Toggle color="red" bind:checked={settings.maintenance_mode} />
+                        </div>
+
+                        {#if settings.maintenance_mode}
+                            <div class="space-y-2">
+                                <Label for="maintenance-message" class="font-semibold text-red-700">Maintenance Message</Label>
+                                <textarea id="maintenance-message" rows="3" class="w-full rounded-lg border-red-200 focus:border-red-500 focus:ring-red-500 bg-red-50" bind:value={settings.maintenance_message}></textarea>
+                            </div>
+                        {/if}
+                    </div>
+                {/if}
+
             </div>
 
-            <div class="space-y-2">
-                <Label for="site-description" class="font-semibold">Site Description (SEO)</Label>
-                <textarea id="site-description" rows="3" class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500" bind:value={settings.site_description}></textarea>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="space-y-2">
-                    <Label for="site-logo" class="font-semibold">Site Logo URL</Label>
-                    <input id="site-logo" type="text" class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500" bind:value={settings.site_logo} placeholder="/uploads/logo.png" />
+            <!-- Save Bar (Sticky inside the column) -->
+            <div class="bg-white p-4 rounded-xl shadow-md border border-gray-100 flex items-center justify-between sticky bottom-4 z-10">
+                <div class="flex items-center gap-3">
+                    {#if saved}
+                        <div class="flex items-center gap-2 text-green-600 font-medium animate-bounce">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            Settings saved successfully!
+                        </div>
+                    {:else}
+                        <span class="text-gray-400 text-sm">You have unsaved changes.</span>
+                    {/if}
                 </div>
-                <div class="space-y-2">
-                    <Label for="site-favicon" class="font-semibold">Site Favicon URL</Label>
-                    <input id="site-favicon" type="text" class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500" bind:value={settings.site_favicon} placeholder="/favicon.ico" />
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="space-y-2">
-                    <Label for="site-language" class="font-semibold">Site Language</Label>
-                    <Select id="site-language" items={languageOptions} bind:value={settings.site_language} />
-                </div>
-                <div class="space-y-2">
-                    <Label for="site-timezone" class="font-semibold">Site Timezone</Label>
-                    <Select id="site-timezone" items={timezoneOptions} bind:value={settings.site_timezone} />
-                </div>
+                <Button size="lg" onclick={save} disabled={loading} class="px-12">
+                    {loading ? 'Saving...' : 'Save Settings'}
+                </Button>
             </div>
         </div>
-    </div>
-
-    <!-- Interface Settings -->
-    <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100">
-        <div class="mb-8 border-b pb-4">
-            <Heading tag="h2" class="text-xl font-bold">Interface & Layout</Heading>
-            <p class="text-gray-500 text-sm mt-1">Control how the frontend looks and behaves.</p>
-        </div>
-
-        <div class="space-y-6">
-            <div>
-                <Label for="sidebar-mode" class="mb-2 text-base font-semibold">Sidebar Visibility</Label>
-                <p class="text-xs text-gray-500 mb-3">
-                    Controls where the sidebar (containing local navigation) is displayed.
-                    You can override this on a per-page basis in the page editor.
-                </p>
-                <Select id="sidebar-mode" items={sidebarOptions} bind:value={settings.sidebar_enabled} />
-            </div>
-        </div>
-    </div>
-
-    <!-- Maintenance Mode -->
-    <div class="bg-white p-8 rounded-xl shadow-sm border border-red-100">
-        <div class="mb-8 border-b pb-4 flex items-center justify-between">
-            <div>
-                <Heading tag="h2" class="text-xl font-bold text-red-600">Maintenance Mode</Heading>
-                <p class="text-gray-500 text-sm mt-1">Take the site offline for all users except administrators.</p>
-            </div>
-            <Toggle color="red" bind:checked={settings.maintenance_mode} />
-        </div>
-
-        {#if settings.maintenance_mode}
-            <div class="space-y-2">
-                <Label for="maintenance-message" class="font-semibold text-red-700">Maintenance Message</Label>
-                <textarea id="maintenance-message" rows="3" class="w-full rounded-lg border-red-200 focus:border-red-500 focus:ring-red-500 bg-red-50" bind:value={settings.maintenance_message}></textarea>
-            </div>
-        {/if}
-    </div>
-
-    <!-- Save Bar -->
-    <div class="bg-white p-4 rounded-xl shadow-md border border-gray-100 sticky bottom-4 flex items-center justify-between z-10">
-        <div class="flex items-center gap-3">
-            {#if saved}
-                <div class="flex items-center gap-2 text-green-600 font-medium animate-bounce">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                    Settings saved successfully!
-                </div>
-            {:else}
-                <span class="text-gray-400 text-sm">You have unsaved changes.</span>
-            {/if}
-        </div>
-        <Button size="lg" onclick={save} disabled={loading} class="px-12">
-            {loading ? 'Saving...' : 'Save Settings'}
-        </Button>
     </div>
 </div>
