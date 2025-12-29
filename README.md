@@ -1,10 +1,37 @@
 # CerneCMS
 
-**CerneCMS** is a lightweight, modern, block-based Content Management System (CMS) designed for developer flexibility and authoring ease. It bridges the gap between a headless-ready architecture and a traditional PHP-based rendering engine.
+**CerneCMS** is a lightweight, modern, block-based Content Management System (CMS) designed for small websites. Perfect for landing pages, product pages, portfolios, and other simple web projects that need an intuitive content management experience.
 
-Built with **FlightPHP** for the backend and **Svelte 5 + Tiptap** for a rich, drag-and-drop editing experience.
+## 🎯 For End Users
 
-![Editor Screenshot](https://placehold.co/800x400?text=CerneCMS+Editor+Preview)
+**CerneCMS is distributed as a ready-to-use deployable bundle** - simply download the zip file, extract it to your PHP hosting, and you're ready to go!
+
+### What You Need
+- **Standard PHP hosting** (PHP 8.2 or higher)
+- **No technical knowledge required** - no Composer, no Node.js, no build tools
+- **Just upload and use** - everything is pre-built and ready
+
+### Perfect For
+- 🏠 **Landing Pages** - Create stunning single-page websites
+- 🛍️ **Product Pages** - Showcase your products with rich content
+- 📄 **Portfolios** - Display your work professionally
+- 📢 **Marketing Sites** - Simple, effective web presence
+- 🎨 **Small Business Sites** - Get online quickly without complexity
+
+### Key Benefits
+- **Zero Setup** - No installation wizard, no configuration needed
+- **Intuitive Editor** - Drag-and-drop blocks to build pages visually
+- **Instant Deployment** - Upload to any standard PHP host
+- **No Dependencies** - Everything included in the bundle
+- **Lightweight** - Fast, efficient, and easy to maintain
+
+---
+
+## 🛠️ For Developers
+
+**CerneCMS** bridges the gap between a headless-ready architecture and a traditional PHP-based rendering engine. Built with **FlightPHP** for the backend and **Svelte 5 + Tiptap** for a rich, drag-and-drop editing experience.
+
+![Editor Screenshot](./docs/img/sample-editor.png)
 
 ## 🚀 Key Features
 
@@ -36,25 +63,32 @@ Built with **FlightPHP** for the backend and **Svelte 5 + Tiptap** for a rich, d
 
 ## 📦 Installation
 
-### Prerequisites
+### For End Users (Recommended)
+Simply download the pre-built CerneCMS bundle (zip file), extract it to your PHP hosting directory, and access your site. No installation steps required!
+
+### For Developers (Building from Source)
+
+**Note:** These instructions are for developers who want to build CerneCMS from source. End users should use the pre-built bundle.
+
+#### Prerequisites
 *   PHP 8.2 or higher
 *   Composer
 *   Node.js (LTS) & pnpm (or npm)
 
-### 1. Setup Backend
+#### 1. Setup Backend
 ```bash
 composer install
 ```
 This will install FlightPHP, Latte, and other PHP dependencies.
 
-### 2. Setup Frontend
+#### 2. Setup Frontend
 ```bash
 pnpm install
 pnpm run build
 ```
 This builds the Svelte admin interface and outputs assets to `public/assets`.
 
-### 3. Initialize & Run
+#### 3. Initialize & Run
 The database is auto-initialized on the first run if it doesn't exist.
 
 Start the PHP built-in server:
@@ -66,7 +100,7 @@ php -S 127.0.0.1:8080 -t public
 - **Admin Panel**: http://127.0.0.1:8080/admin
 - **Frontend Site**: http://127.0.0.1:8080/
 
-### 4. Frontend Development (Optional)
+#### 4. Frontend Development (Optional)
 For hot-reload during frontend development:
 ```bash
 npm run dev      # Starts Vite on port 5173+
