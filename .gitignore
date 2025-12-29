@@ -12,6 +12,7 @@
 # Generated Assets
 /public/assets
 /public/cache
+/public/uploads
 
 # OS Files
 .DS_Store
