@@ -44,6 +44,7 @@
         "@tiptap/starter-kit": "^3.14.0",
         "fullcalendar": "^6.1.20",
         "photoswipe": "^5.4.4",
+        "svelte-spa-router": "^4.0.1",
         "svelte-tiptap": "^3.0.1",
         "tippy.js": "^6.3.7"
     }
