@@ -52,6 +52,22 @@
     {#if editorStore.blockSettings.type === 'image'}
         <div class="space-y-6">
             <div>
+                <Label class="mb-2">Image Source</Label>
+                <div class="mb-2 relative group">
+                     <img src={editorStore.blockSettings.attributes.src} alt="Current Block" class="w-full h-auto max-h-48 object-cover rounded-lg border border-gray-200" />
+                </div>
+                <button class="text-sm text-blue-600 hover:underline" onclick={() => {
+                     const callback = editorStore.blockSettings.updateCallback;
+                     editorStore.closeBlockSettings();
+                     editorStore.openMediaLibrary((url) => {
+                         if (callback) callback({ src: url });
+                     });
+                }}>
+                     Replace Image
+                </button>
+            </div>
+
+            <div>
                 <Label class="mb-2">Caption/Title</Label>
                 <Input
                     type="text"

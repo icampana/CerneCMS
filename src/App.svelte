@@ -34,7 +34,7 @@
 
 <!-- Global Media Library Modal -->
 {#if editorStore.mediaLibraryOpen}
-    <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+    <div class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-4xl overflow-hidden max-h-[90vh] flex flex-col">
             <div class="p-4 border-b border-gray-100 flex justify-between items-center">
                 <h3 class="font-bold text-lg">Select Image</h3>
