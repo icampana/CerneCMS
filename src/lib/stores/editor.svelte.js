@@ -115,7 +115,6 @@ import DragHandle from '@tiptap/extension-drag-handle';
                 }),
                     Grid,
                     Column,
-                    HorizontalRule,
                     CalendarExtension, // Add to extensions list
                     CTAExtension,
                     Table.configure({

@@ -2,16 +2,18 @@
   import { createEventDispatcher } from 'svelte';
   import { onMount } from 'svelte';
 
-  export let selectedPageId = null;
-  export let placeholder = "Search for a page...";
+  let {
+    selectedPageId = $bindable(null),
+    placeholder = "Search for a page...",
+    onselect // Use prop instead of dispatcher if possible, but keeping dispatcher for now for minimal change if needed.
+             // Actually let's use props for Svelte 5.
+  } = $props();
 
-  const dispatch = createEventDispatcher();
-
-  let searchTerm = '';
-  let results = [];
-  let isSearching = false;
-  let showDropdown = false;
-  let selectedPage = null;
+  let searchTerm = $state('');
+  let results = $state([]);
+  let isSearching = $state(false);
+  let showDropdown = $state(false);
+  let selectedPage = $state(null);
   let debounceTimer;
 
   function handleInput() {
@@ -46,7 +48,7 @@
     selectedPageId = page.id;
     searchTerm = page.title;
     showDropdown = false;
-    dispatch('select', page);
+    if (onselect) onselect(page);
   }
 
   // If initial ID provided, try to fetch it to show title (optional optimization)
@@ -61,9 +63,9 @@
     </div>
     <input type="text"
            bind:value={searchTerm}
-           on:input={handleInput}
-           on:focus={() => { if(results.length) showDropdown = true; }}
-           on:blur={() => setTimeout(() => showDropdown = false, 200)}
+           oninput={handleInput}
+           onfocus={() => { if(results.length) showDropdown = true; }}
+           onblur={() => setTimeout(() => showDropdown = false, 200)}
            class="block w-full p-2.5 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
            {placeholder} />
     {#if isSearching}
@@ -79,7 +81,7 @@
         {#each results as page}
           <li>
             <button type="button"
-                    on:click={() => selectPage(page)}
+                    onclick={() => selectPage(page)}
                     class="w-full text-left px-4 py-2 hover:bg-gray-100 flex flex-col">
               <span class="text-sm font-medium text-gray-900">{page.title}</span>
               <span class="text-xs text-gray-500">/{page.slug}</span>

@@ -46,34 +46,29 @@
         <div class="max-w-3xl mx-auto flex justify-between px-4">
             <a href="/" class="font-bold text-xl tracking-tighter">CerneCMS</a>
             <nav class="flex gap-4">
-                {if function_exists('menu')}
-                    {menu('primary')|noescape}
-                {else}
-                    <a href="/" class="hover:underline">Home</a>
-                    <a href="/admin" class="hover:underline text-gray-500">Admin</a>
-                {/if}
+                {menu('primary')|noescape}
             </nav>
         </div>
     </header>
 
-    {if function_exists('showSidebar') && showSidebar($page)}
-    <div class="layout-with-sidebar max-w-6xl mx-auto flex gap-8 px-4">
-        <aside class="w-64 shrink-0 hidden md:block">
-            {localMenu($page)|noescape}
-        </aside>
-        <main class="flex-1">
-            {breadcrumbs($page)|noescape}
-            {block content}{/block}
+    {var $sidebarVisible = function_exists('showSidebar') && showSidebar($page)}
+
+    <div n:class="$sidebarVisible ? 'layout-with-sidebar max-w-6xl mx-auto flex gap-8 px-4' : ''">
+        {if $sidebarVisible}
+            <aside class="w-64 shrink-0 hidden md:block">
+                {localMenu($page)|noescape}
+            </aside>
+        {/if}
+
+        <main class="{$sidebarVisible ? 'flex-1' : ''}">
+            {if function_exists('breadcrumbs')}
+                {breadcrumbs($page)|noescape}
+            {/if}
+            {include content}
         </main>
     </div>
-    {else}
-    <main>
-        {if function_exists('breadcrumbs')}
-            {breadcrumbs($page)|noescape}
-        {/if}
-        {block content}{/block}
-    </main>
-    {/if}
+
+    {block content}{/block}
 
     <footer class="mt-20 py-8 text-center text-sm text-gray-400 border-t border-gray-100">
         Built with CerneCMS (FlightPHP + Svelte)

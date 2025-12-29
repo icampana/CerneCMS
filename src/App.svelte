@@ -1,7 +1,6 @@
 <script>
-    import Editor from './lib/components/Editor.svelte';
+    import Router from 'svelte-spa-router';
     import Navbar from './lib/components/Navbar.svelte';
-    import DataGrid from './lib/components/DataGrid.svelte';
     import MediaManager from './lib/components/MediaManager.svelte';
     import VideoModal from './lib/components/modals/VideoModal.svelte';
     import { Toast } from 'flowbite-svelte';
@@ -9,57 +8,27 @@
     import { editorStore } from './lib/stores/editor.svelte.js';
     import BlockSettingsDrawer from './lib/components/drawers/BlockSettingsDrawer.svelte';
 
-    // State
-    let view = $state('list'); // 'list' or 'editor'
-    let activePageId = $state(null);
+    // Routes
+    import PageList from './lib/components/admin/PageList.svelte';
+    import Editor from './lib/components/Editor.svelte';
+    import MenuManager from './lib/components/admin/MenuManager.svelte';
+    import SiteSettings from './lib/components/admin/SiteSettings.svelte';
 
-    // Columns for the Page List
-    const pageColumns = [
-        { label: 'Title', field: 'title' },
-        { label: 'Slug', field: 'slug' },
-        { label: 'Status', field: 'status' },
-        { label: 'Updated At', field: 'updated_at' }
-    ];
-
-    function handleEdit(page) {
-        activePageId = page.id;
-        view = 'editor';
-    }
-
-    function handleCreate() {
-        activePageId = null;
-        view = 'editor';
-    }
-
-    function handleBack() {
-        view = 'list';
-        activePageId = null;
-    }
+    const routes = {
+        '/': PageList,
+        '/pages': PageList,
+        '/editor/:pageId': Editor,
+        '/menus': MenuManager,
+        '/settings': SiteSettings
+    };
 </script>
 
 <div class="min-h-screen bg-gray-50 flex flex-col">
-    <Navbar {view} onNew={handleCreate} onBack={handleBack} />
+    <Navbar />
 
     <div class="cms-shell flex-1 p-8 max-w-7xl mx-auto w-full">
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 min-h-[500px]">
-            {#if view === 'list'}
-                <div class="p-6 border-b border-gray-100">
-                    <h2 class="text-xl font-bold">Pages</h2>
-                </div>
-                <DataGrid
-                    endpoint="/api/pages"
-                    columns={pageColumns}
-                    onEdit={handleEdit}
-                />
-            {:else}
-                {#key activePageId}
-                    <Editor
-                        pageId={activePageId}
-                        onBack={handleBack}
-                    />
-                {/key}
-            {/if}
-        </div>
+        <!-- Router View -->
+        <Router {routes} />
     </div>
 </div>
 

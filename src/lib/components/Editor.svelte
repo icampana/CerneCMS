@@ -3,24 +3,25 @@
     import { Breadcrumb, BreadcrumbItem } from 'flowbite-svelte';
     import { CogOutline } from 'flowbite-svelte-icons';
     import { editorStore } from '../stores/editor.svelte.js';
+    import { push } from 'svelte-spa-router'; // Import push
     import BubbleMenu from './menus/BubbleMenu.svelte';
     import BlockOptionsMenu from './menus/BlockOptionsMenu.svelte';
     import ComponentToolbar from './ComponentToolbar.svelte';
     import PageSettingsDrawer from './PageSettingsDrawer.svelte';
 
-    let { pageId = null, onBack } = $props();
+    // Get params from router
+    let { params = {} } = $props();
+    let pageId = $derived(params.pageId);
 
     let element;
     let bubbleMenuEl = $state(null);
 
     onMount(async () => {
         // Init Editor
-        setTimeout(() => {
-             editorStore.init(element, bubbleMenuEl);
-        }, 0);
+        editorStore.init(element, bubbleMenuEl);
 
         // Load Data if pageId is present
-        if (pageId) {
+        if (pageId && pageId !== 'new') {
             try {
                 const res = await fetch(`/api/pages/${pageId}`);
                 if (res.ok) {
@@ -61,7 +62,7 @@
         <!-- Breadcrumb Navigation -->
         <div class="flex items-center justify-between mb-3">
             <Breadcrumb aria-label="Page navigation">
-                <BreadcrumbItem href="#" onclick={(e) => { e.preventDefault(); onBack(); }} home>Pages</BreadcrumbItem>
+                <BreadcrumbItem href="#/pages" home>Pages</BreadcrumbItem>
                 <BreadcrumbItem>{editorStore.title || 'New Page'}</BreadcrumbItem>
             </Breadcrumb>
             <button

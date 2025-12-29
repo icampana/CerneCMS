@@ -5,16 +5,16 @@
     import MenuEditor from './MenuEditor.svelte';
 
     // State
-    let menus = [];
-    let activeMenuId = null;
-    let isCreateModalOpen = false;
-    let isEditModalOpen = false;
+    let menus = $state([]);
+    let activeMenuId = $state(null);
+    let isCreateModalOpen = $state(false);
+    let isEditModalOpen = $state(false);
 
     // Form State
-    let formName = '';
-    let formSlug = '';
-    let formIsPrimary = false;
-    let editingId = null;
+    let formName = $state('');
+    let formSlug = $state('');
+    let formIsPrimary = $state(false);
+    let editingId = $state(null);
 
     onMount(() => {
         fetchMenus();
@@ -96,7 +96,7 @@
 
 {#if activeMenuId}
     <div class="mb-4">
-        <Button color="light" on:click={() => activeMenuId = null}>← Back to Menus</Button>
+        <Button color="light" onclick={() => activeMenuId = null}>← Back to Menus</Button>
     </div>
     {#key activeMenuId}
         <MenuEditor menuId={activeMenuId} />
@@ -104,7 +104,7 @@
 {:else}
     <div class="flex justify-between items-center mb-6">
         <h2 class="text-xl font-bold">Menus</h2>
-        <Button on:click={openCreate}>
+        <Button onclick={openCreate}>
             <PlusOutline class="w-4 h-4 mr-2" />
             New Menu
         </Button>
@@ -130,11 +130,11 @@
                         </TableBodyCell>
                         <TableBodyCell>
                             <div class="flex gap-2">
-                                <Button size="xs" on:click={() => manageItems(menu.id)}>Manage Items</Button>
-                                <Button size="xs" color="light" on:click={() => openEdit(menu)}>
+                                <Button size="xs" onclick={() => manageItems(menu.id)}>Manage Items</Button>
+                                <Button size="xs" color="light" onclick={() => openEdit(menu)}>
                                     <EditSolid class="w-4 h-4" />
                                 </Button>
-                                <Button size="xs" color="red" on:click={() => handleDelete(menu.id)}>
+                                <Button size="xs" color="red" onclick={() => handleDelete(menu.id)}>
                                     <TrashBinSolid class="w-4 h-4" />
                                 </Button>
                             </div>
@@ -158,7 +158,7 @@
     <div class="flex flex-col space-y-4">
         <div>
             <Label class="mb-2">Name</Label>
-            <Input bind:value={formName} placeholder="Main Menu" on:input={() => { if(!editingId) formSlug = generateSlug(formName); }} />
+            <Input bind:value={formName} placeholder="Main Menu" oninput={() => { if(!editingId) formSlug = generateSlug(formName); }} />
         </div>
         <div>
             <Label class="mb-2">Slug</Label>
@@ -166,8 +166,8 @@
         </div>
         <Checkbox bind:checked={formIsPrimary}>Set as Primary Menu</Checkbox>
         <div class="flex justify-end gap-2">
-            <Button color="alternative" on:click={() => isCreateModalOpen = false}>Cancel</Button>
-            <Button on:click={handleSave}>Create</Button>
+            <Button color="alternative" onclick={() => isCreateModalOpen = false}>Cancel</Button>
+            <Button onclick={handleSave}>Create</Button>
         </div>
     </div>
 </Modal>
@@ -184,8 +184,8 @@
         </div>
         <Checkbox bind:checked={formIsPrimary}>Set as Primary Menu</Checkbox>
         <div class="flex justify-end gap-2">
-            <Button color="alternative" on:click={() => isEditModalOpen = false}>Cancel</Button>
-            <Button on:click={handleSave}>Save</Button>
+            <Button color="alternative" onclick={() => isEditModalOpen = false}>Cancel</Button>
+            <Button onclick={handleSave}>Save</Button>
         </div>
     </div>
 </Modal>

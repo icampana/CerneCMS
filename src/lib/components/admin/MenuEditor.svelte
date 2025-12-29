@@ -4,13 +4,13 @@
     import { EditSolid, TrashBinSolid, PlusOutline, AngleRightOutline, AngleLeftOutline, AngleUpOutline, AngleDownOutline } from 'flowbite-svelte-icons';
     import MenuItemModal from './MenuItemModal.svelte';
 
-    export let menuId;
+    let { menuId } = $props();
 
-    let items = [];
-    let menu = null;
-    let loading = true;
-    let isModalOpen = false;
-    let editingItem = null; // null = create new
+    let items = $state([]);
+    let menu = $state(null);
+    let loading = $state(true);
+    let isModalOpen = $state(false);
+    let editingItem = $state(null); // null = create new
 
     onMount(() => {
         fetchMenu();
@@ -216,7 +216,7 @@
     <div class="bg-white p-6 rounded-lg shadow-sm">
         <div class="flex justify-between items-center mb-6">
             <h3 class="text-lg font-bold">Edit Menu: {menu.name}</h3>
-            <Button on:click={openAdd}>
+            <Button onclick={openAdd}>
                 <PlusOutline class="w-4 h-4 mr-2" />
                 Add Item
             </Button>
@@ -229,8 +229,8 @@
 
                     <!-- Drag Handle / Move Controls -->
                     <div class="flex flex-col gap-1 mr-2 text-gray-400">
-                        <button on:click={() => moveUp(i)} disabled={i === 0} class="hover:text-blue-600 disabled:opacity-30"><AngleUpOutline class="w-3 h-3"/></button>
-                        <button on:click={() => moveDown(i)} disabled={i === items.length - 1} class="hover:text-blue-600 disabled:opacity-30"><AngleDownOutline class="w-3 h-3"/></button>
+                        <button onclick={() => moveUp(i)} disabled={i === 0} class="hover:text-blue-600 disabled:opacity-30"><AngleUpOutline class="w-3 h-3"/></button>
+                        <button onclick={() => moveDown(i)} disabled={i === items.length - 1} class="hover:text-blue-600 disabled:opacity-30"><AngleDownOutline class="w-3 h-3"/></button>
                     </div>
 
                     <div class="flex-1">
@@ -249,10 +249,10 @@
 
                     <!-- Indentation Controls -->
                     <div class="flex gap-1 border-r pr-2 mr-2 border-gray-200">
-                        <button on:click={() => outdent(i)} disabled={item.depth === 0} class="p-1 hover:bg-gray-200 rounded disabled:opacity-30" title="Outdent">
+                        <button onclick={() => outdent(i)} disabled={item.depth === 0} class="p-1 hover:bg-gray-200 rounded disabled:opacity-30" title="Outdent">
                              <AngleLeftOutline class="w-4 h-4 text-gray-500" />
                         </button>
-                        <button on:click={() => indent(i)}
+                        <button onclick={() => indent(i)}
                                 disabled={item.depth >= 1 || i === 0 || items[i-1].depth >= 1}
                                 class="p-1 hover:bg-gray-200 rounded disabled:opacity-30" title="Indent">
                              <AngleRightOutline class="w-4 h-4 text-gray-500" />
@@ -261,10 +261,10 @@
 
                     <!-- Actions -->
                     <div class="flex gap-1">
-                        <button on:click={() => openEdit(item)} class="p-2 hover:bg-blue-100 text-blue-600 rounded">
+                        <button onclick={() => openEdit(item)} class="p-2 hover:bg-blue-100 text-blue-600 rounded">
                             <EditSolid class="w-4 h-4" />
                         </button>
-                        <button on:click={() => handleDelete(item.id)} class="p-2 hover:bg-red-100 text-red-600 rounded">
+                        <button onclick={() => handleDelete(item.id)} class="p-2 hover:bg-red-100 text-red-600 rounded">
                             <TrashBinSolid class="w-4 h-4" />
                         </button>
                     </div>

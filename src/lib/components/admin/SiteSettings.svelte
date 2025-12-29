@@ -2,12 +2,12 @@
     import { onMount } from 'svelte';
     import { Button, Label, Select, Toggle, Heading } from 'flowbite-svelte';
 
-    let settings = {
+    let settings = $state({
         sidebar_enabled: 'internal' // all, internal, none
-    };
+    });
 
-    let loading = false;
-    let saved = false;
+    let loading = $state(false);
+    let saved = $state(false);
 
     const sidebarOptions = [
         { value: 'all', name: 'Enabled on All Pages' },
@@ -71,7 +71,7 @@
             {:else}
                 <span></span>
             {/if}
-            <Button on:click={save} disabled={loading}>
+            <Button onclick={save} disabled={loading}>
                 {loading ? 'Saving...' : 'Save Settings'}
             </Button>
         </div>

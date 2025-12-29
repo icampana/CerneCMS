@@ -2,33 +2,37 @@
   import { Modal, Label, Input, Select, Button, Checkbox, Radio } from 'flowbite-svelte';
   import InternalLinkPicker from '../ui/InternalLinkPicker.svelte';
 
-  export let open = false;
-  export let item = null; // If null, creating new
-  export let onSave = () => {};
-  export let onClose = () => {};
+  let {
+    open = $bindable(false),
+    item = null,
+    onSave = () => {},
+    onClose = () => {}
+  } = $props();
 
-  let title = '';
-  let linkType = 'internal'; // internal, external, anchor
-  let linkValue = ''; // for external/anchor
-  let targetPageId = null;
-  let openNewTab = false;
-  let isInternalPickerOpen = false;
+  let title = $state('');
+  let linkType = $state('internal'); // internal, external, anchor
+  let linkValue = $state(''); // for external/anchor
+  let targetPageId = $state(null);
+  let openNewTab = $state(false);
+  let isInternalPickerOpen = $state(false);
 
   // Initialize from item
-  $: if (open && item) {
-    title = item.title;
-    linkType = item.link_type;
-    linkValue = item.link_value;
-    targetPageId = item.target_page_id;
-    openNewTab = !!item.open_new_tab;
-  } else if (open && !item) {
-    // Reset
-    title = '';
-    linkType = 'internal';
-    linkValue = '';
-    targetPageId = null;
-    openNewTab = false;
-  }
+  $effect(() => {
+    if (open && item) {
+      title = item.title;
+      linkType = item.link_type;
+      linkValue = item.link_value;
+      targetPageId = item.target_page_id;
+      openNewTab = !!item.open_new_tab;
+    } else if (open && !item) {
+      // Reset
+      title = '';
+      linkType = 'internal';
+      linkValue = '';
+      targetPageId = null;
+      openNewTab = false;
+    }
+  });
 
   function handleInternalSelect(event) {
     const page = event.detail;
@@ -68,7 +72,7 @@
         <Label class="mb-2">Select Page</Label>
         <InternalLinkPicker
             selectedPageId={targetPageId}
-            on:select={handleInternalSelect}
+            onselect={(page) => handleInternalSelect({ detail: page })}
         />
         {#if targetPageId}
             <div class="mt-1 text-xs text-green-600 flex items-center">
@@ -104,8 +108,8 @@
     </div>
 
     <div class="flex justify-end gap-2 mt-4">
-        <Button color="alternative" on:click={onClose}>Cancel</Button>
-        <Button on:click={save}>Save</Button>
+        <Button color="alternative" onclick={onClose}>Cancel</Button>
+        <Button onclick={save}>Save</Button>
     </div>
 
   </div>

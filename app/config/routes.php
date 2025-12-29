@@ -18,9 +18,13 @@ Flight::group('/admin', function () {
 
 // API Routes
 Flight::group('/api', function () {
+    // Page Search (must come before @id)
+    Flight::route('GET /pages/search', [ApiController::class, 'searchPages']);
     Flight::route('GET /pages', [ApiController::class, 'getPages']);
     Flight::route('GET /pages/@id', [ApiController::class, 'getPage']);
     Flight::route('POST /pages', [ApiController::class, 'savePage']);
+
+    // Media Routes
     Flight::route('GET /media', [ApiController::class, 'getMedia']);
     Flight::route('POST /media', [ApiController::class, 'uploadMedia']);
 
@@ -38,16 +42,13 @@ Flight::group('/api', function () {
     Flight::route('DELETE /menus/@id', [\app\controllers\MenuController::class, 'delete']);
 
     Flight::route('POST /menus/@id/items', [\app\controllers\MenuController::class, 'addItem']);
-    Flight::route('PUT /menu-items/reorder', [\app\controllers\MenuController::class, 'reorderItems']); // specific first
+    Flight::route('PUT /menu-items/reorder', [\app\controllers\MenuController::class, 'reorderItems']);
     Flight::route('PUT /menu-items/@id', [\app\controllers\MenuController::class, 'updateItem']);
     Flight::route('DELETE /menu-items/@id', [\app\controllers\MenuController::class, 'deleteItem']);
 
     // Settings Routes
     Flight::route('GET /settings', [\app\controllers\SettingsController::class, 'index']);
     Flight::route('PUT /settings', [\app\controllers\SettingsController::class, 'update']);
-
-    // Page Search
-    Flight::route('GET /pages/search', [\app\controllers\ApiController::class, 'searchPages']);
 }, [new \app\middleware\AuthMiddleware()]);
 
 // Frontend Routes (Catch-all for pages)
