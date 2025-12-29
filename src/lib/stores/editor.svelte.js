@@ -11,6 +11,7 @@
     import { TextAlign } from '@tiptap/extension-text-align';
     import { HorizontalRule } from '@tiptap/extension-horizontal-rule';
     import CalendarExtension from '../editor/extensions/Calendar.js'; // Import Calendar Extension
+    import CTAExtension from '../editor/extensions/CTA.js'; // Import CTA Extension
     import Grid from '../extensions/Grid';
 import Column from '../extensions/Column';
 import DragHandle from '@tiptap/extension-drag-handle';
@@ -112,6 +113,7 @@ import DragHandle from '@tiptap/extension-drag-handle';
                     Column,
                     HorizontalRule,
                     CalendarExtension, // Add to extensions list
+                    CTAExtension,
                     Table.configure({
                         resizable: true,
                         HTMLAttributes: {
@@ -222,6 +224,8 @@ import DragHandle from '@tiptap/extension-drag-handle';
                                 });
                             } else if (type === 'divider') {
                                 view.dispatch(view.state.tr.insert(pos, view.state.schema.nodes.horizontalRule.create()));
+                            } else if (type === 'cta') {
+                                view.dispatch(view.state.tr.insert(pos, view.state.schema.nodes.cta.create()));
                             } else if (type === 'calendar') {
                                 view.dispatch(view.state.tr.insert(pos, view.state.schema.nodes.fullCalendar.create({ showAllCalendars: false })));
                             } else if (type === 'heading') {
