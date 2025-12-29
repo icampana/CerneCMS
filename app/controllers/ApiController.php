@@ -32,6 +32,8 @@ class ApiController
                 'title' => $page->title,
                 'slug' => $page->slug,
                 'status' => $page->status,
+                'parent_id' => $page->parent_id,
+                'meta_json' => $page->meta_json, // raw json string or decoded? Let's decode if client expects obj
                 'created_at' => $page->created_at,
                 'updated_at' => $page->updated_at,
                 // Return content as object (decoded from the stored JSON string)
@@ -71,6 +73,16 @@ class ApiController
 
         $page->title = $data->title;
         $page->updated_at = date('Y-m-d H:i:s');
+
+        // Settings
+        if (isset($data->parent_id)) {
+            $page->parent_id = $data->parent_id ?: null;
+        }
+
+        if (isset($data->meta_json)) {
+            $page->meta_json = is_string($data->meta_json) ? $data->meta_json : json_encode($data->meta_json);
+        }
+
         $page->save();
 
         // 2. Handle Content (Block)
@@ -108,6 +120,15 @@ class ApiController
             ]
         ]);
     }
+
+    // Search pages
+    public function searchPages()
+    {
+        $query = Flight::request()->query['q'] ?? '';
+        $results = \app\models\Page::search($query);
+        Flight::json($results);
+    }
+
     public function getMedia()
     {
         $uploadDir = __DIR__ . '/../../public/uploads';

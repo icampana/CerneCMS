@@ -61,6 +61,16 @@ Flight::register('view', 'Latte\Engine', [], function ($latte) {
     // Configure FileLoader
     $viewDir = Flight::get('flight.views.path');
     $latte->setLoader(new \Latte\Loaders\FileLoader($viewDir));
+
+    // Register Menu Helpers
+    $latte->addFunction('menu', fn(string $slug, array $opts = []) => \app\services\MenuService::render($slug, $opts));
+    $latte->addFunction('localMenu', function ($page = null) {
+        // If page not passed, try to find it from Flight context or just pass null if not available easily
+        // But templates usually have $page available if passed from controller.
+        return \app\services\MenuService::renderLocalMenu($page);
+    });
+    $latte->addFunction('breadcrumbs', fn($page = null) => \app\services\MenuService::renderBreadcrumbs($page));
+    $latte->addFunction('showSidebar', fn($page = null) => \app\services\MenuService::shouldShowSidebar($page));
 });
 
 // Override Flight::render to use Latte

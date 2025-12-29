@@ -106,5 +106,70 @@ class Database
             // $db->exec("CREATE INDEX idx_calendar_events_widget_id ON calendar_events(widget_id)"); // Removed
             $db->exec("CREATE INDEX idx_calendar_events_start_date ON calendar_events(start_date)");
         }
+
+        // Check for parent_id in pages
+        $cols = $db->query("PRAGMA table_info(pages)")->fetchAll();
+        $hasParentId = false;
+        foreach ($cols as $col) {
+            if ($col['name'] === 'parent_id') {
+                $hasParentId = true;
+                break;
+            }
+        }
+        if (!$hasParentId) {
+            $db->exec("ALTER TABLE pages ADD COLUMN parent_id INTEGER REFERENCES pages(id) ON DELETE SET NULL");
+        }
+
+        // Check if 'menus' table exists
+        $stmt = $db->query("SELECT name FROM sqlite_master WHERE type='table' AND name='menus'");
+        if (!$stmt->fetch()) {
+            $db->exec("CREATE TABLE menus (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                slug TEXT UNIQUE NOT NULL,
+                is_primary INTEGER DEFAULT 0,
+                location TEXT DEFAULT 'header',
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            )");
+        }
+
+        // Check if 'menu_items' table exists
+        $stmt = $db->query("SELECT name FROM sqlite_master WHERE type='table' AND name='menu_items'");
+        if (!$stmt->fetch()) {
+            $db->exec("CREATE TABLE menu_items (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                menu_id INTEGER NOT NULL,
+                parent_id INTEGER DEFAULT NULL,
+                title TEXT NOT NULL,
+                link_type TEXT NOT NULL,
+                link_value TEXT NOT NULL,
+                target_page_id INTEGER,
+                is_external INTEGER DEFAULT 0,
+                open_new_tab INTEGER DEFAULT 0,
+                sort_order INTEGER DEFAULT 0,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY(menu_id) REFERENCES menus(id) ON DELETE CASCADE,
+                FOREIGN KEY(parent_id) REFERENCES menu_items(id) ON DELETE CASCADE,
+                FOREIGN KEY(target_page_id) REFERENCES pages(id) ON DELETE SET NULL
+            )");
+            $db->exec("CREATE INDEX idx_menu_items_menu_id ON menu_items(menu_id)");
+            $db->exec("CREATE INDEX idx_menu_items_parent_id ON menu_items(parent_id)");
+        }
+
+        // Check if 'settings' table exists
+        $stmt = $db->query("SELECT name FROM sqlite_master WHERE type='table' AND name='settings'");
+        if (!$stmt->fetch()) {
+            $db->exec("CREATE TABLE settings (
+                key TEXT PRIMARY KEY,
+                value TEXT,
+                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            )");
+
+            // Insert default settings
+            $stmt = $db->prepare("INSERT INTO settings (key, value) VALUES (?, ?)");
+            $stmt->execute(['sidebar_enabled', 'internal']);
+            $stmt->execute(['sidebar_menu_slug', NULL]);
+        }
     }
 }

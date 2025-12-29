@@ -29,6 +29,25 @@ Flight::group('/api', function () {
     Flight::route('POST /calendar/events', [app\controllers\CalendarController::class, 'addEvent']);
     Flight::route('PUT /calendar/events/@id', [app\controllers\CalendarController::class, 'updateEvent']);
     Flight::route('DELETE /calendar/events/@id', [app\controllers\CalendarController::class, 'deleteEvent']);
+
+    // Menu Routes
+    Flight::route('GET /menus', [\app\controllers\MenuController::class, 'index']);
+    Flight::route('POST /menus', [\app\controllers\MenuController::class, 'create']);
+    Flight::route('GET /menus/@id', [\app\controllers\MenuController::class, 'show']);
+    Flight::route('PUT /menus/@id', [\app\controllers\MenuController::class, 'update']);
+    Flight::route('DELETE /menus/@id', [\app\controllers\MenuController::class, 'delete']);
+
+    Flight::route('POST /menus/@id/items', [\app\controllers\MenuController::class, 'addItem']);
+    Flight::route('PUT /menu-items/reorder', [\app\controllers\MenuController::class, 'reorderItems']); // specific first
+    Flight::route('PUT /menu-items/@id', [\app\controllers\MenuController::class, 'updateItem']);
+    Flight::route('DELETE /menu-items/@id', [\app\controllers\MenuController::class, 'deleteItem']);
+
+    // Settings Routes
+    Flight::route('GET /settings', [\app\controllers\SettingsController::class, 'index']);
+    Flight::route('PUT /settings', [\app\controllers\SettingsController::class, 'update']);
+
+    // Page Search
+    Flight::route('GET /pages/search', [\app\controllers\ApiController::class, 'searchPages']);
 }, [new \app\middleware\AuthMiddleware()]);
 
 // Frontend Routes (Catch-all for pages)

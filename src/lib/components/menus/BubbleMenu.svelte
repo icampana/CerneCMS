@@ -1,6 +1,7 @@
 <script>
     import { BubbleMenu } from '@tiptap/extension-bubble-menu';
     import { onMount } from 'svelte';
+    import { LinkOutline } from 'flowbite-svelte-icons';
     import { editorStore } from '../../stores/editor.svelte.js';
 
     let element;
@@ -30,6 +31,23 @@
             aria-label="Strike"
         >
             <span class="line-through">S</span>
+        </button>
+        <button
+            onclick={() => {
+                const currentLink = editorStore.editor?.getAttributes('link').href;
+                editorStore.openLinkModal((url) => {
+                    // Normalize url if empty? confirmLink handles non-empty.
+                    // If removeLink was called it handles unsetting.
+                    // This callback is for setting link.
+                    if(url) {
+                        editorStore.editor?.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
+                    }
+                });
+            }}
+            class="p-2 hover:bg-gray-100 rounded {editorStore.editor?.isActive('link') ? 'bg-gray-100 text-blue-600' : 'text-gray-700'}"
+            aria-label="Link"
+        >
+            <LinkOutline class="w-4 h-4" />
         </button>
 </div>
 

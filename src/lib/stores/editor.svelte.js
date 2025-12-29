@@ -59,6 +59,10 @@ import DragHandle from '@tiptap/extension-drag-handle';
         metaTitle = $state('');
         metaDescription = $state('');
 
+        // Page Hierarchy & Settings
+        parentId = $state(null);
+        metaJson = $state({}); // { sidebar_override: 'inherit'|'show'|'hide' }
+
         // Block Settings Drawer State
         blockSettings = $state({
             isOpen: false,
@@ -275,6 +279,11 @@ import DragHandle from '@tiptap/extension-drag-handle';
             // SEO fields
             this.metaTitle = data.meta_title || '';
             this.metaDescription = data.meta_description || '';
+
+            // Hierarchy & Meta
+            this.parentId = data.parent_id || null;
+            this.metaJson = typeof data.meta_json === 'string' ? JSON.parse(data.meta_json) : (data.meta_json || {});
+
             // Decode content if it's an object (from API) or use as is
             // API returns object (node) - Tiptap setContent accepts JSON object or HTML string
             this.setContent(data.content);
@@ -286,6 +295,8 @@ import DragHandle from '@tiptap/extension-drag-handle';
             this.title = 'Untitled Page';
             this.metaTitle = '';
             this.metaDescription = '';
+            this.parentId = null;
+            this.metaJson = {};
             this.setContent('<p>Start writing...</p>');
         }
 
@@ -308,7 +319,9 @@ import DragHandle from '@tiptap/extension-drag-handle';
                         // If we have a slug, keep it, otherwise generate from title
                         slug: this.slug || this.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''),
                         meta_title: this.metaTitle,
-                        meta_description: this.metaDescription
+                        meta_description: this.metaDescription,
+                        parent_id: this.parentId,
+                        meta_json: this.metaJson
                     })
                 });
 
@@ -366,6 +379,33 @@ import DragHandle from '@tiptap/extension-drag-handle';
                 this.videoCallback(url);
             }
             this.closeVideoModal();
+        }
+
+        // Link Modal State & Methods
+        linkModalOpen = $state(false);
+        linkCallback = $state(null);
+
+        openLinkModal(callback) {
+            this.linkCallback = callback;
+            this.linkModalOpen = true;
+        }
+
+        closeLinkModal() {
+            this.linkModalOpen = false;
+            this.linkCallback = null;
+        }
+
+        confirmLink(url) {
+            if (this.linkCallback) {
+                this.linkCallback(url);
+            }
+            this.closeLinkModal();
+        }
+
+        removeLink() {
+            if (this.editor) {
+                this.editor.chain().focus().unsetLink().run();
+            }
         }
 
         // Toast Methods
