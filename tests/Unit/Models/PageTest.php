@@ -11,6 +11,7 @@ class PageTest extends TestCase
 
     protected function setUp(): void
     {
+        parent::setUp();
         $this->pageModel = new Page();
     }
 
@@ -18,13 +19,13 @@ class PageTest extends TestCase
     {
         $page = new Page();
         $page->title = 'Test Page';
-        $page->slug = 'test-page';
+        $page->slug = 'test-page-' . uniqid();
         $page->status = 'published';
         $page->save();
 
         $this->assertNotNull($page->id);
         $this->assertEquals('Test Page', $page->title);
-        $this->assertEquals('test-page', $page->slug);
+        $this->assertEquals('test-page-' . uniqid(), $page->slug);
         $this->assertEquals('published', $page->status);
     }
 

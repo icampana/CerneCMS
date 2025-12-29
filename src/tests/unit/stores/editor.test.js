@@ -1,205 +1,217 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { editor } from '$lib/stores/editor.svelte.js';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { editorStore } from '$lib/stores/editor.svelte.js';
 
 describe('Editor Store', () => {
   beforeEach(() => {
     // Reset editor state before each test
-    editor.set({
-      content: [],
-      selection: null
-    });
+    editorStore.reset();
   });
 
-  it('initializes with empty content', () => {
-    const state = editor.get();
-    expect(state.content).toEqual([]);
-    expect(state.selection).toBeNull();
+  it('initializes with default values', () => {
+    expect(editorStore.id).toBeNull();
+    expect(editorStore.slug).toBeNull();
+    expect(editorStore.title).toBe('Untitled Page');
+    expect(editorStore.content).toBe('<p>Start writing...</p>');
+    expect(editorStore.isEditable).toBe(true);
+    expect(editorStore.isSaving).toBe(false);
   });
 
-  it('initializes with existing content', () => {
-    const initialContent = [
-      {
-        type: 'paragraph',
-        content: [
-          { type: 'text', text: 'Hello World' }
-        ]
-      }
-    ];
+  it('resets state', () => {
+    editorStore.title = 'Modified Title';
+    editorStore.slug = 'modified-slug';
 
-    editor.set({ content: initialContent, selection: null });
-    const state = editor.get();
+    editorStore.reset();
 
-    expect(state.content).toEqual(initialContent);
+    expect(editorStore.id).toBeNull();
+    expect(editorStore.slug).toBeNull();
+    expect(editorStore.title).toBe('Untitled Page');
+    expect(editorStore.slug).toBeNull();
   });
 
-  it('adds a new block', () => {
-    const newBlock = {
-      type: 'paragraph',
-      content: [
-        { type: 'text', text: 'New paragraph' }
-      ]
+  it('loads page data', () => {
+    const pageData = {
+      id: 1,
+      title: 'Test Page',
+      slug: 'test-page',
+      meta_title: 'SEO Title',
+      meta_description: 'SEO Description',
+      parent_id: null,
+      meta_json: { sidebar_override: 'show' },
+      content: { type: 'doc', content: [] }
     };
 
-    editor.update(state => ({
-      ...state,
-      content: [...state.content, newBlock]
-    }));
+    editorStore.load(pageData);
 
-    const currentState = editor.get();
-    expect(currentState.content).toHaveLength(1);
-    expect(currentState.content[0]).toEqual(newBlock);
+    expect(editorStore.id).toBe(1);
+    expect(editorStore.title).toBe('Test Page');
+    expect(editorStore.slug).toBe('test-page');
+    expect(editorStore.metaTitle).toBe('SEO Title');
+    expect(editorStore.metaDescription).toBe('SEO Description');
+    expect(editorStore.parentId).toBeNull();
+    expect(editorStore.metaJson).toEqual({ sidebar_override: 'show' });
   });
 
-  it('updates block content', () => {
-    const initialContent = [
-      {
-        type: 'paragraph',
-        content: [
-          { type: 'text', text: 'Original text' }
-        ]
-      }
-    ];
+  it('sets content', () => {
+    const html = '<p>Test content</p>';
 
-    editor.set({ content: initialContent, selection: null });
+    editorStore.setContent(html);
 
-    editor.update(state => ({
-      ...state,
-      content: state.content.map((block, index) =>
-        index === 0
-          ? { ...block, content: [{ type: 'text', text: 'Updated text' }] }
-          : block
-      )
-    }));
-
-    const currentState = editor.get();
-    expect(currentState.content[0].content[0].text).toBe('Updated text');
+    expect(editorStore.content).toBe(html);
   });
 
-  it('deletes a block', () => {
-    const initialContent = [
-      { type: 'paragraph', content: [{ type: 'text', text: 'First' }] },
-      { type: 'paragraph', content: [{ type: 'text', text: 'Second' }] },
-      { type: 'paragraph', content: [{ type: 'text', text: 'Third' }] }
-    ];
+  it('shows toast notification', () => {
+    editorStore.showToast('Test message', 'error');
 
-    editor.set({ content: initialContent, selection: null });
-
-    editor.update(state => ({
-      ...state,
-      content: state.content.filter((_, index) => index !== 1)
-    }));
-
-    const currentState = editor.get();
-    expect(currentState.content).toHaveLength(2);
-    expect(currentState.content[0].content[0].text).toBe('First');
-    expect(currentState.content[1].content[0].text).toBe('Third');
+    expect(editorStore.toastMessage).toBe('Test message');
+    expect(editorStore.toastType).toBe('error');
+    expect(editorStore.toastVisible).toBe(true);
   });
 
-  it('reorders blocks', () => {
-    const initialContent = [
-      { type: 'paragraph', content: [{ type: 'text', text: 'First' }] },
-      { type: 'paragraph', content: [{ type: 'text', text: 'Second' }] },
-      { type: 'paragraph', content: [{ type: 'text', text: 'Third' }] }
-    ];
+  it('hides toast notification', () => {
+    editorStore.toastVisible = true;
+    editorStore.toastMessage = 'Test';
 
-    editor.set({ content: initialContent, selection: null });
+    editorStore.hideToast();
 
-    // Move second block to first position
-    editor.update(state => {
-      const newContent = [...state.content];
-      const [moved] = newContent.splice(1, 1);
-      newContent.unshift(moved);
-      return { ...state, content: newContent };
-    });
-
-    const currentState = editor.get();
-    expect(currentState.content[0].content[0].text).toBe('Second');
-    expect(currentState.content[1].content[0].text).toBe('First');
+    expect(editorStore.toastVisible).toBe(false);
   });
 
-  it('updates selection', () => {
-    editor.update(state => ({
-      ...state,
-      selection: { from: 0, to: 5 }
-    }));
+  it('opens and closes media library', () => {
+    const callback = vi.fn();
 
-    const currentState = editor.get();
-    expect(currentState.selection).toEqual({ from: 0, to: 5 });
+    editorStore.openMediaLibrary(callback);
+
+    expect(editorStore.mediaLibraryOpen).toBe(true);
+    expect(editorStore.mediaSelectCallback).toBe(callback);
+
+    editorStore.closeMediaLibrary();
+
+    expect(editorStore.mediaLibraryOpen).toBe(false);
+    expect(editorStore.mediaSelectCallback).toBeNull();
   });
 
-  it('clears selection', () => {
-    editor.update(state => ({
-      ...state,
-      selection: { from: 0, to: 5 }
-    }));
+  it('opens and closes video modal', () => {
+    const callback = vi.fn();
 
-    editor.update(state => ({
-      ...state,
-      selection: null
-    }));
+    editorStore.openVideoModal(callback);
 
-    const currentState = editor.get();
-    expect(currentState.selection).toBeNull();
+    expect(editorStore.videoModalOpen).toBe(true);
+    expect(editorStore.videoCallback).toBe(callback);
+
+    editorStore.closeVideoModal();
+
+    expect(editorStore.videoModalOpen).toBe(false);
+    expect(editorStore.videoCallback).toBeNull();
   });
 
-  it('handles multiple blocks', () => {
-    const content = [
-      { type: 'paragraph', content: [{ type: 'text', text: 'First' }] },
-      { type: 'paragraph', content: [{ type: 'text', text: 'Second' }] },
-      { type: 'paragraph', content: [{ type: 'text', text: 'Third' }] }
-    ];
+  it('opens and closes link modal', () => {
+    const callback = vi.fn();
 
-    editor.set({ content, selection: null });
-    const state = editor.get();
+    editorStore.openLinkModal(callback);
 
-    expect(state.content).toHaveLength(3);
-    expect(state.content[0].content[0].text).toBe('First');
-    expect(state.content[1].content[0].text).toBe('Second');
-    expect(state.content[2].content[0].text).toBe('Third');
+    expect(editorStore.linkModalOpen).toBe(true);
+    expect(editorStore.linkCallback).toBe(callback);
+
+    editorStore.closeLinkModal();
+
+    expect(editorStore.linkModalOpen).toBe(false);
+    expect(editorStore.linkCallback).toBeNull();
   });
 
-  it('serializes to JSON', () => {
-    const content = [
-      {
-        type: 'paragraph',
-        content: [{ type: 'text', text: 'Test' }]
-      }
-    ];
+  it('opens and closes settings drawer', () => {
+    editorStore.openSettingsDrawer();
 
-    editor.set({ content, selection: null });
-    const state = editor.get();
+    expect(editorStore.settingsDrawerOpen).toBe(true);
 
-    const json = JSON.stringify(state.content);
-    const parsed = JSON.parse(json);
+    editorStore.closeSettingsDrawer();
 
-    expect(parsed).toEqual(content);
+    expect(editorStore.settingsDrawerOpen).toBe(false);
   });
 
-  it('handles empty content array', () => {
-    editor.set({ content: [], selection: null });
-    const state = editor.get();
+  it('opens and closes block settings', () => {
+    const updateCallback = vi.fn();
 
-    expect(state.content).toEqual([]);
-    expect(state.content).toHaveLength(0);
+    editorStore.openBlockSettings('image', { src: 'test.jpg' }, updateCallback);
+
+    expect(editorStore.blockSettings.isOpen).toBe(true);
+    expect(editorStore.blockSettings.type).toBe('image');
+    expect(editorStore.blockSettings.attributes).toEqual({ src: 'test.jpg' });
+    expect(editorStore.blockSettings.updateCallback).toBe(updateCallback);
+
+    editorStore.closeBlockSettings();
+
+    expect(editorStore.blockSettings.isOpen).toBe(false);
+    expect(editorStore.blockSettings.type).toBeNull();
   });
 
-  it('preserves immutability when updating', () => {
-    const initialContent = [
-      { type: 'paragraph', content: [{ type: 'text', text: 'Original' }] }
-    ];
+  it('updates block setting', () => {
+    const updateCallback = vi.fn();
 
-    editor.set({ content: initialContent, selection: null });
-    const stateBefore = editor.get();
+    editorStore.openBlockSettings('image', { src: 'old.jpg' }, updateCallback);
+    editorStore.updateBlockSetting('src', 'new.jpg');
 
-    editor.update(state => ({
-      ...state,
-      content: [...state.content, { type: 'paragraph', content: [{ type: 'text', text: 'New' }] }]
-    }));
+    expect(editorStore.blockSettings.attributes.src).toBe('new.jpg');
+    expect(updateCallback).toHaveBeenCalledWith({ src: 'new.jpg' });
+  });
 
-    const stateAfter = editor.get();
+  it('handles page hierarchy', () => {
+    const pageData = {
+      id: 1,
+      title: 'Parent Page',
+      slug: 'parent',
+      parent_id: null,
+      meta_json: {},
+      content: { type: 'doc', content: [] }
+    };
 
-    expect(stateBefore.content).toHaveLength(1);
-    expect(stateAfter.content).toHaveLength(2);
-    expect(stateBefore.content).not.toBe(stateAfter.content);
+    editorStore.load(pageData);
+
+    expect(editorStore.parentId).toBeNull();
+
+    const childData = {
+      id: 2,
+      title: 'Child Page',
+      slug: 'child',
+      parent_id: 1,
+      meta_json: {},
+      content: { type: 'doc', content: [] }
+    };
+
+    editorStore.load(childData);
+
+    expect(editorStore.parentId).toBe(1);
+  });
+
+  it('handles SEO metadata', () => {
+    const pageData = {
+      id: 1,
+      title: 'Test Page',
+      slug: 'test',
+      meta_title: 'Custom Title',
+      meta_description: 'Custom Description',
+      parent_id: null,
+      meta_json: {},
+      content: { type: 'doc', content: [] }
+    };
+
+    editorStore.load(pageData);
+
+    expect(editorStore.metaTitle).toBe('Custom Title');
+    expect(editorStore.metaDescription).toBe('Custom Description');
+  });
+
+  it('handles block menu state', () => {
+    editorStore.blockMenuOpen = false;
+    editorStore.blockMenuTarget = null;
+    editorStore.currentBlockRange = null;
+
+    expect(editorStore.blockMenuOpen).toBe(false);
+    expect(editorStore.blockMenuTarget).toBeNull();
+    expect(editorStore.currentBlockRange).toBeNull();
+  });
+
+  it('handles saving state', () => {
+    expect(editorStore.isSaving).toBe(false);
+    expect(editorStore.lastSaved).toBeNull();
   });
 });

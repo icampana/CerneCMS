@@ -8,17 +8,28 @@ use app\models\MenuItem;
 
 class MenuTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        // Clean up any existing menus before each test
+        $menuModel = new Menu();
+        $menus = $menuModel->findAll();
+        foreach ($menus as $menu) {
+            $menu->delete();
+        }
+    }
+
     public function testCreateMenu()
     {
         $menu = new Menu();
         $menu->name = 'Test Menu';
-        $menu->slug = 'test-menu';
+        $menu->slug = 'test-menu-' . uniqid();
         $menu->is_primary = 0;
         $menu->save();
 
         $this->assertNotNull($menu->id);
         $this->assertEquals('Test Menu', $menu->name);
-        $this->assertEquals('test-menu', $menu->slug);
+        $this->assertEquals('test-menu-' . uniqid(), $menu->slug);
         $this->assertEquals(0, $menu->is_primary);
     }
 

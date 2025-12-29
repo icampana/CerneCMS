@@ -17,3 +17,5 @@
 # OS Files
 .DS_Store
 Thumbs.db
+
+.phpunit.cache
