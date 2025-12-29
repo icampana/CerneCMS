@@ -17,6 +17,7 @@ import Column from '../extensions/Column';
 import DragHandle from '@tiptap/extension-drag-handle';
     import { SvelteNodeViewRenderer } from 'svelte-tiptap';
     import ImageBlock from '../components/blocks/ImageBlock.svelte';
+    import ImageUpload from '../editor/extensions/ImageUpload.js';
 
     // Svelte 5 Rune-based Store
     export class EditorStore {
@@ -91,6 +92,7 @@ import DragHandle from '@tiptap/extension-drag-handle';
                 element: element,
                 extensions: [
                     StarterKit,
+                    ImageUpload,
                 Image.extend({
                     addAttributes() {
                         return {
@@ -180,19 +182,8 @@ import DragHandle from '@tiptap/extension-drag-handle';
                             // Insert based on type
                             let content;
                             if (type === 'image') {
-                                // Insert placeholder first
-                                const placeholderUrl = 'https://placehold.co/600x400?text=Select+Image';
-                                const tr = view.state.tr.insert(pos, view.state.schema.nodes.image.create({ src: placeholderUrl }));
-                                // Select the inserted image
-                                const selection = view.state.selection.constructor.near(tr.doc.resolve(pos), 1);
-                                tr.setSelection(selection);
-                                view.dispatch(tr);
-
-                                // Open Media Library immediately
-                                this.openMediaLibrary((url) => {
-                                    // Update the selected image (which we just inserted)
-                                    this.editor.chain().focus().setImage({ src: url }).run();
-                                });
+                                // Insert Image Upload Node
+                                view.dispatch(view.state.tr.insert(pos, view.state.schema.nodes.imageUpload.create()));
                             } else if (type === 'grid-2') {
                                 view.dispatch(view.state.tr.insert(pos, view.state.schema.nodes.grid.create({ colCount: 2 }, [
                                     view.state.schema.nodes.column.create(null, [view.state.schema.nodes.paragraph.create()]),

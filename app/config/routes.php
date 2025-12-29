@@ -26,7 +26,7 @@ Flight::group('/api', function () {
 
     // Media Routes
     Flight::route('GET /media', [ApiController::class, 'getMedia']);
-    Flight::route('POST /media', [ApiController::class, 'uploadMedia']);
+    Flight::route('POST /media/upload', [ApiController::class, 'uploadMedia']);
 
     // Calendar Routes
     Flight::route('GET /calendar/events', [app\controllers\CalendarController::class, 'getEvents']);

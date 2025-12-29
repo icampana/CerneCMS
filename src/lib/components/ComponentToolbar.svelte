@@ -37,9 +37,7 @@
         editorStore.editor.chain().focus();
 
         if (comp.action === 'image') {
-            editorStore.openMediaLibrary((url) => {
-                 editorStore.editor.chain().focus().setImage({ src: url }).run();
-            });
+            editorStore.editor.chain().focus().setImageUpload().run();
         } else if (comp.action === 'table') {
             editorStore.editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
         } else if (comp.action === 'video') {
