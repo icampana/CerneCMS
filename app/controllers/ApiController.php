@@ -110,7 +110,7 @@ class ApiController
     }
     public function getMedia()
     {
-        $uploadDir = __DIR__ . '/../../public/assets/uploads';
+        $uploadDir = __DIR__ . '/../../public/uploads';
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0777, true);
         }
@@ -121,7 +121,7 @@ class ApiController
         foreach ($files as $file) {
             $media[] = [
                 'name' => $file,
-                'url' => '/assets/uploads/' . $file,
+                'url' => '/uploads/' . $file,
                 'type' => mime_content_type($uploadDir . '/' . $file)
             ];
         }
@@ -131,7 +131,7 @@ class ApiController
 
     public function uploadMedia()
     {
-        $uploadDir = __DIR__ . '/../../public/assets/uploads';
+        $uploadDir = __DIR__ . '/../../public/uploads';
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0777, true);
         }
@@ -167,7 +167,7 @@ class ApiController
         if (move_uploaded_file($file['tmp_name'], $targetPath)) {
             Flight::json([
                 'status' => 'success',
-                'url' => '/assets/uploads/' . $filename,
+                'url' => '/uploads/' . $filename,
                 'name' => $filename
             ]);
         } else {

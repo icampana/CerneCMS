@@ -7,6 +7,7 @@
     import { Toast } from 'flowbite-svelte';
     import { CheckCircleSolid, CloseCircleSolid } from 'flowbite-svelte-icons';
     import { editorStore } from './lib/stores/editor.svelte.js';
+    import BlockSettingsDrawer from './lib/components/drawers/BlockSettingsDrawer.svelte';
 
     // State
     let view = $state('list'); // 'list' or 'editor'
@@ -103,3 +104,6 @@
         </Toast>
     </div>
 {/if}
+
+<!-- Block Settings Drawer -->
+<BlockSettingsDrawer />

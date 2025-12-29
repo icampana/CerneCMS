@@ -1,5 +1,7 @@
 <script>
     import { NodeViewWrapper } from 'svelte-tiptap';
+    import { editorStore } from '../../stores/editor.svelte.js';
+    import { CogSolid } from 'flowbite-svelte-icons';
 
     // Props from svelte-tiptap
     let { node, updateAttributes, selected, editor } = $props();
@@ -9,39 +11,27 @@
     let title = $derived(node.attrs.title || '');
     let lightbox = $derived(node.attrs.lightbox || false);
 
-    function handleCaptionChange(e) {
-        updateAttributes({ title: e.target.value });
-    }
-
-    function handleLightboxToggle(e) {
-        updateAttributes({ lightbox: e.target.checked });
+    function openSettings(e) {
+        e.stopPropagation();
+        editorStore.openBlockSettings('image', node.attrs, updateAttributes);
     }
 </script>
 
-<NodeViewWrapper class="image-block-wrapper my-8 {selected ? 'ring-2 ring-blue-500 rounded' : ''}">
-    <figure class="flex flex-col items-center">
+<NodeViewWrapper class="image-block-wrapper my-8 relative group {selected ? 'ring-2 ring-blue-500 rounded' : ''}">
+    <figure class="flex flex-col items-center relative">
         <img {src} {alt} {title} class="max-w-full rounded-lg shadow-sm {lightbox ? 'cursor-pointer hover:opacity-90' : ''}" />
-        <input
-            type="text"
-            class="mt-2 text-center text-sm text-gray-500 border-none bg-transparent placeholder-gray-300 focus:ring-0 w-full"
-            placeholder="Write a caption..."
-            value={title}
-            oninput={handleCaptionChange}
-        />
-        {#if selected}
-            <div class="mt-2 flex items-center gap-2">
-                <input
-                    type="checkbox"
-                    id="lightbox-toggle"
-                    checked={lightbox}
-                    onchange={handleLightboxToggle}
-                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
-                />
-                <label for="lightbox-toggle" class="text-sm text-gray-600 cursor-pointer">
-                    Enable lightbox (click to zoom)
-                </label>
-            </div>
+        {#if title}
+            <figcaption class="mt-2 text-center text-sm text-gray-500">{title}</figcaption>
         {/if}
+
+        <!-- Settings Button (Visible on hover or selection) -->
+        <button
+            class="absolute top-2 right-2 bg-white/90 p-2 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white z-10"
+            onclick={openSettings}
+            title="Image Settings"
+        >
+            <CogSolid class="w-5 h-5 text-gray-700" />
+        </button>
     </figure>
 </NodeViewWrapper>
 

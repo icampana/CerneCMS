@@ -58,6 +58,14 @@ import DragHandle from '@tiptap/extension-drag-handle';
         metaTitle = $state('');
         metaDescription = $state('');
 
+        // Block Settings Drawer State
+        blockSettings = $state({
+            isOpen: false,
+            type: null, // e.g., 'image'
+            attributes: {},
+            updateCallback: null
+        });
+
         constructor() {
             // Tiptap is lazily initialized or re-configured when elements are available
             // But usually we init it once.
@@ -78,10 +86,7 @@ import DragHandle from '@tiptap/extension-drag-handle';
                 element: element,
                 extensions: [
                     StarterKit,
-                Image.configure({
-                    HTMLAttributes: {
-                        class: 'rounded-lg max-w-full',
-                    },
+                Image.extend({
                     addAttributes() {
                         return {
                             ...this.parent?.(),
@@ -94,11 +99,14 @@ import DragHandle from '@tiptap/extension-drag-handle';
                                 }
                             }
                         };
-                    }
-                }).extend({ // Re-adding the extend part for SvelteNodeViewRenderer
+                    },
                     addNodeView() {
                         return SvelteNodeViewRenderer(ImageBlock);
                     }
+                }).configure({
+                    HTMLAttributes: {
+                        class: 'rounded-lg max-w-full',
+                    },
                 }),
                     Grid,
                     Column,
@@ -378,6 +386,29 @@ import DragHandle from '@tiptap/extension-drag-handle';
 
         closeSettingsDrawer() {
             this.settingsDrawerOpen = false;
+        }
+
+        // Block Settings Methods
+        openBlockSettings(type, attributes, updateCallback) {
+            this.blockSettings = {
+                isOpen: true,
+                type,
+                attributes: { ...attributes }, // Clone to avoid direct mutation issues
+                updateCallback
+            };
+        }
+
+        closeBlockSettings() {
+            this.blockSettings.isOpen = false;
+            this.blockSettings.type = null;
+            this.blockSettings.updateCallback = null;
+        }
+
+        updateBlockSetting(key, value) {
+            this.blockSettings.attributes[key] = value;
+            if (this.blockSettings.updateCallback) {
+                this.blockSettings.updateCallback({ [key]: value });
+            }
         }
 
         handleDragHandleClick(event, element) {

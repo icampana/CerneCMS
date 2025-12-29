@@ -76,9 +76,12 @@ class BlockRenderer
                 $caption = $title ? "<figcaption>{$title}</figcaption>" : "";
 
                 $lightboxAttr = $lightbox ? 'data-pswp-width="auto" data-pswp-height="auto"' : '';
-                $lightboxClass = $lightbox ? 'cursor-pointer hover:opacity-90' : '';
-
-                return "<figure><img src=\"{$src}\" alt=\"{$alt}\" title=\"{$title}\" {$lightboxAttr} class=\"{$lightboxClass}\">{$caption}</figure>";
+                // Use standard cursor-pointer if not wrapping in anchor, but anchor is better.
+                if ($lightbox) {
+                    return "<figure><a href=\"{$src}\" {$lightboxAttr} class=\"lightbox-trigger block cursor-zoom-in\"><img src=\"{$src}\" alt=\"{$alt}\" title=\"{$title}\" class=\"hover:opacity-90 transition-opacity\"></a>{$caption}</figure>";
+                } else {
+                    return "<figure><img src=\"{$src}\" alt=\"{$alt}\" title=\"{$title}\">{$caption}</figure>";
+                }
 
             case 'grid':
                 return "<div class=\"grid-layout flex gap-4 my-4\">{$content}</div>";
