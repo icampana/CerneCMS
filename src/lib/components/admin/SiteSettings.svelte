@@ -1,7 +1,7 @@
 <script>
     import { onMount } from 'svelte';
     import { Button, Label, Select, Toggle, Heading, Sidebar, SidebarGroup, SidebarItem, SidebarWrapper } from 'flowbite-svelte';
-    import { CogSolid, GlobeSolid, ImageSolid, DesktopPcSolid, LockSolid } from 'flowbite-svelte-icons';
+    import { CogSolid, GlobeSolid, ImageSolid, DesktopPcSolid, LockSolid, TrashBinSolid } from 'flowbite-svelte-icons';
 
     let settings = $state({
         sidebar_enabled: 'internal' // all, internal, none
@@ -76,6 +76,22 @@
             alert('Error saving settings');
         } finally {
             loading = false;
+        }
+    }
+
+    async function clearCache() {
+        if (!confirm('Are you sure you want to clear the server cache? This may temporarily slow down the first page load for visitors.')) return;
+
+        try {
+            const res = await fetch('/api/settings/cache-clear', { method: 'POST' });
+            if (res.ok) {
+                alert('Cache cleared successfully!');
+            } else {
+                alert('Failed to clear cache.');
+            }
+        } catch (e) {
+            console.error(e);
+            alert('Error clearing cache.');
         }
     }
 </script>
@@ -215,6 +231,19 @@
                                 <textarea id="maintenance-message" rows="3" class="w-full rounded-lg border-red-200 focus:border-red-500 focus:ring-red-500 bg-red-50" bind:value={settings.maintenance_message}></textarea>
                             </div>
                         {/if}
+
+                        <hr class="border-gray-200" />
+
+                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
+                            <div>
+                                <span class="font-semibold text-gray-800">Clear System Cache</span>
+                                <p class="text-sm text-gray-600">Removes all compiled templates. Use this if you don't see your changes on the frontend.</p>
+                            </div>
+                            <Button color="light" onclick={clearCache} class="!p-2.5">
+                                <TrashBinSolid class="w-5 h-5 text-gray-500" />
+                                <span class="ml-2">Clear Cache</span>
+                            </Button>
+                        </div>
                     </div>
                 {/if}
 

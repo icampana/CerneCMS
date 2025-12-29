@@ -10,21 +10,11 @@ class CacheClearCommand implements Command
     public function execute(array $args): void
     {
         echo "Clearing cache...\n";
-        $cacheDir = __DIR__ . '/../../public/cache';
 
-        if (is_dir($cacheDir)) {
-            $files = new RecursiveIteratorIterator(
-                new RecursiveDirectoryIterator($cacheDir, RecursiveDirectoryIterator::SKIP_DOTS),
-                RecursiveIteratorIterator::CHILD_FIRST
-            );
-
-            foreach ($files as $fileinfo) {
-                $todo = ($fileinfo->isDir() ? 'rmdir' : 'unlink');
-                $todo($fileinfo->getRealPath());
-            }
+        if (\app\helpers\Cache::clear()) {
             echo "✔ Cache cleared successfully.\n";
         } else {
-            echo "✔ Cache directory does not exist (nothing to clear).\n";
+            echo "✘ Failed to clear cache. Check logs/permissions.\n";
         }
     }
 

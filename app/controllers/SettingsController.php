@@ -29,4 +29,13 @@ class SettingsController
 
         Flight::json(['success' => true]);
     }
+
+    public function clearCache()
+    {
+        if (\app\helpers\Cache::clear()) {
+            Flight::json(['success' => true, 'message' => 'Cache cleared']);
+        } else {
+            Flight::halt(500, json_encode(['error' => 'Failed to clear cache']));
+        }
+    }
 }

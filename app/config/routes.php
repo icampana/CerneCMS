@@ -49,6 +49,7 @@ Flight::group('/api', function () {
     // Settings Routes
     Flight::route('GET /settings', [\app\controllers\SettingsController::class, 'index']);
     Flight::route('PUT /settings', [\app\controllers\SettingsController::class, 'update']);
+    Flight::route('POST /settings/cache-clear', [\app\controllers\SettingsController::class, 'clearCache']);
 }, [new \app\middleware\AuthMiddleware()]);
 
 // Frontend Routes (Catch-all for pages)
