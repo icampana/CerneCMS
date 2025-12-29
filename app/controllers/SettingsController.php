@@ -14,11 +14,17 @@ class SettingsController
 
     public function update()
     {
-        $data = Flight::request()->data;
-        // Expects dictionary of key-values
+        $json = Flight::request()->getBody();
+        $data = json_decode($json, true);
 
-        foreach ($data as $key => $value) {
-            Settings::set($key, $value);
+        if ($data) {
+            foreach ($data as $key => $value) {
+                if (!empty($key)) {
+                    // Convert booleans to 1/0 for database if necessary,
+                    // though SQLite/ActiveRecord should handle it.
+                    Settings::set($key, $value);
+                }
+            }
         }
 
         Flight::json(['success' => true]);

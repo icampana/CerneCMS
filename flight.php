@@ -62,7 +62,8 @@ Flight::register('view', 'Latte\Engine', [], function ($latte) {
     $viewDir = Flight::get('flight.views.path');
     $latte->setLoader(new \Latte\Loaders\FileLoader($viewDir));
 
-    // Register Menu Helpers
+    // Register Menu & Settings Helpers
+    $latte->addFunction('setting', fn(string $key, $default = null) => \app\models\Settings::get($key, $default));
     $latte->addFunction('menu', fn(string $slug, array $opts = []) => \app\services\MenuService::render($slug, $opts));
     $latte->addFunction('localMenu', function ($page = null) {
         // If page not passed, try to find it from Flight context or just pass null if not available easily

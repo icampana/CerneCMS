@@ -15,6 +15,7 @@ class Settings extends ActiveRecord
     {
         $config['connection'] = \Flight::db();
         $config['primary_key'] = 'key'; // Override typical 'id'
+        $config['auto_increment'] = false;
     }
 
     public static function get($key, $default = null)

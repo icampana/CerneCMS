@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{$title ?? 'CerneCMS'}</title>
+    <title>{$title ?? setting('site_name', 'CerneCMS')}</title>
+    <meta name="description" content="{setting('site_description', '')}">
+    <link rel="icon" type="image/x-icon" href="{setting('site_favicon', '/favicon.ico')}">
 
     <!-- Load Vite Assets -->
     {\app\helpers\Vite::assets()|noescape}
@@ -44,7 +46,12 @@
 
     <header class="border-b border-gray-100 py-4 mb-8">
         <div class="max-w-3xl mx-auto flex justify-between px-4">
-            <a href="/" class="font-bold text-xl tracking-tighter">CerneCMS</a>
+            <a href="/" class="flex items-center gap-2 font-bold text-xl tracking-tighter">
+                {if setting('site_logo')}
+                    <img src="{setting('site_logo')}" alt="{setting('site_name')}" class="h-8 w-auto">
+                {/if}
+                <span>{setting('site_name', 'CerneCMS')}</span>
+            </a>
             <nav class="flex gap-4">
                 {menu('primary')|noescape}
             </nav>

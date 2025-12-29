@@ -10,6 +10,15 @@ class FrontendController
 
     public function renderPage($slug = null)
     {
+        // 0. Maintenance Mode Check
+        $isMaintenance = \app\models\Settings::get('maintenance_mode', false);
+        $isAdmin = \Flight::session()->get('user_id') !== null;
+
+        if ($isMaintenance && !$isAdmin) {
+            Flight::render('maintenance.latte', []);
+            return;
+        }
+
         // 1. Determine Slug (Default to 'home' for root path)
         // If route is /*, Flight passes the full path. We need to handle that.
         // But we will change route to /@slug
