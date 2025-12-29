@@ -1,0 +1,128 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        extensions: pdo, pdo_sqlite
+
+    - name: Get Composer cache directory
+      id: composer-cache
+      run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+    - name: Cache Composer dependencies
+      uses: actions/cache@v3
+      with:
+        path: ${{ steps.composer-cache.outputs.dir }}
+        key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+        restore-keys: ${{ runner.os }}-composer-
+
+    - name: Install Composer dependencies
+      run: composer install --prefer-dist --no-progress --no-dev
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+
+    - name: Install pnpm
+      uses: pnpm/action-setup@v2
+      with:
+        version: 8
+
+    - name: Get pnpm cache directory
+      id: pnpm-cache
+      run: echo "dir=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+    - name: Cache pnpm dependencies
+      uses: actions/cache@v3
+      with:
+        path: ${{ steps.pnpm-cache.outputs.dir }}
+        key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+        restore-keys: ${{ runner.os }}-pnpm-
+
+    - name: Install pnpm dependencies
+      run: pnpm install --frozen-lockfile
+
+    - name: Build frontend assets
+      run: pnpm run build
+
+    - name: Create release directory
+      run: mkdir -p release
+
+    - name: Copy project files to release directory
+      run: |
+        cp -r app release/
+        cp -r bin release/
+        cp -r content release/
+        cp -r docs release/
+        cp -r plans release/
+        cp -r public release/
+        cp -r src release/
+        cp -r vendor release/
+        cp .gitignore release/
+        cp bin/cerne release/
+        cp CHANGELOG.md release/
+        cp composer.json release/
+        cp composer.lock release/
+        cp flight.php release/
+        cp INSTALL.md release/
+        cp package.json release/
+        cp pnpm-lock.yaml release/
+        cp README.md release/
+        cp vite.config.js release/
+
+    - name: Create .env.example file
+      run: |
+        echo "# Database" > release/.env.example
+        echo "DB_PATH=content/database/cms.sqlite" >> release/.env.example
+        echo "" >> release/.env.example
+        echo "# Application" >> release/.env.example
+        echo "APP_ENV=production" >> release/.env.example
+        echo "APP_DEBUG=false" >> release/.env.example
+        echo "" >> release/.env.example
+        echo "# Security" >> release/.env.example
+        echo "APP_KEY=your-secret-key-here" >> release/.env.example
+
+    - name: Create zip file
+      run: |
+        cd release
+        zip -r ../cernecms-${{ github.ref_name }}.zip .
+        cd ..
+
+    - name: Extract version from tag
+      id: get_version
+      run: echo "version=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: cernecms-${{ steps.get_version.outputs.version }}.zip
+        generate_release_notes: true
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Upload release artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: cernecms-${{ steps.get_version.outputs.version }}.zip
+        path: cernecms-${{ steps.get_version.outputs.version }}.zip
+        retention-days: 90
