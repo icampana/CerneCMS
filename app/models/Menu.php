@@ -22,7 +22,7 @@ class Menu extends ActiveRecord
     public function getItems()
     {
         $itemModel = new MenuItem();
-        $allItems = $itemModel->eq('menu_id', $this->id)->order('sort_order ASC')->findAll();
+        $allItems = $itemModel->eq('menu_id', $this->id)->orderBy('sort_order ASC')->findAll();
 
         $tree = [];
         $itemsById = [];
