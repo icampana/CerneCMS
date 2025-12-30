@@ -1,5 +1,5 @@
 <script>
-    import { Drawer, Sidebar, SidebarGroup, SidebarItem, SidebarWrapper, CloseButton } from 'flowbite-svelte';
+    import { Drawer, Sidebar, SidebarBrand, SidebarGroup, SidebarItem, SidebarWrapper, CloseButton } from 'flowbite-svelte';
     import { sineIn } from 'svelte/easing';
     import { editorStore } from '../stores/editor.svelte.js';
     import { location } from 'svelte-spa-router';
@@ -15,6 +15,12 @@
         x: -320,
         duration: 200,
         easing: sineIn
+    };
+
+    const site = {
+      name: "Cerne CMS",
+      href: "/admin",
+      img: "/images/cerne-logo.svg"
     };
 
     // Pattern matching BlockSettingsDrawer.svelte
@@ -62,31 +68,33 @@
     <div class="px-2">
         <Sidebar class="w-full">
             <SidebarWrapper class="bg-transparent">
+                <SidebarBrand {site} classes={{ img: "h-6 w-6" }} />
                 <!-- Main Navigation -->
                 <SidebarGroup>
                     <p class="px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">Content</p>
+
                     <SidebarItem label="Dashboard" href="#/" active={$location === '/'} class="rounded-lg mb-1">
-                        <svelte:fragment slot="icon">
-                            <GridSolid class="w-5 h-5" />
-                        </svelte:fragment>
+                        {#snippet icon()}
+                            <GridSolid class="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
+                        {/snippet}
                     </SidebarItem>
                     <SidebarItem label="Pages" href="#/pages" active={$location === '/pages' || $location.includes('/editor')} class="rounded-lg mb-1">
-                        <svelte:fragment slot="icon">
-                            <FileLinesSolid class="w-5 h-5" />
-                        </svelte:fragment>
+                        {#snippet icon()}
+                            <FileLinesSolid class="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
+                        {/snippet}
                     </SidebarItem>
                     <SidebarItem label="Menus" href="#/menus" active={$location.includes('/menus')} class="rounded-lg mb-1">
-                        <svelte:fragment slot="icon">
-                            <ListMusicSolid class="w-5 h-5" />
-                        </svelte:fragment>
+                        {#snippet icon()}
+                            <ListMusicSolid class="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
+                        {/snippet}
                     </SidebarItem>
                     <SidebarItem label="Media" href="#" class="rounded-lg mb-1 opacity-50 cursor-not-allowed">
-                        <svelte:fragment slot="icon">
-                            <ImageSolid class="w-5 h-5" />
-                        </svelte:fragment>
-                        <svelte:fragment slot="subtext">
+                        {#snippet icon()}
+                            <ImageSolid class="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
+                        {/snippet}
+                        {#snippet subtext()}
                             <span class="text-xs bg-gray-200 dark:bg-gray-700 px-2 py-0.5 rounded-full">Soon</span>
-                        </svelte:fragment>
+                        {/snippet}
                     </SidebarItem>
                 </SidebarGroup>
 
@@ -94,9 +102,9 @@
                 <SidebarGroup border class="pt-4 mt-4">
                     <p class="px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">System</p>
                     <SidebarItem label="Settings" href="#/settings" active={$location.includes('/settings')} class="rounded-lg mb-1">
-                        <svelte:fragment slot="icon">
-                            <CogSolid class="w-5 h-5" />
-                        </svelte:fragment>
+                        {#snippet icon()}
+                            <CogSolid class="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
+                        {/snippet}
                     </SidebarItem>
                 </SidebarGroup>
             </SidebarWrapper>
