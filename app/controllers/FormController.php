@@ -14,7 +14,7 @@ class FormController
 
         $result = [];
         foreach ($forms as $form) {
-            $row = $form->getRow();
+            $row = (array) $form->getRow();
             // Count responses
             $row['response_count'] = $form->countResponses();
             $result[] = $row;
