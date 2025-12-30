@@ -9,7 +9,8 @@
         MinusOutline,
         CalendarMonthSolid,
         BullhornSolid,
-        CameraPhotoSolid
+        CameraPhotoSolid,
+        ClipboardCleanSolid
     } from 'flowbite-svelte-icons';
     import { editorStore } from '../stores/editor.svelte.js';
 
@@ -25,6 +26,7 @@
         { type: 'cta', label: 'CTA', icon: BullhornSolid, action: 'cta' },
         { type: 'divider', label: 'Divider', icon: MinusOutline, action: 'divider' },
         { type: 'calendar', label: 'Calendar', icon: CalendarMonthSolid, action: 'calendar' },
+        { type: 'form', label: 'Form', icon: ClipboardCleanSolid, action: 'form' },
     ];
 
     const handleDragStart = (event, type) => {
@@ -54,6 +56,8 @@
              editorStore.editor.chain().focus().insertContent({ type: 'cta' }).run();
         } else if (comp.action === 'gallery') {
              editorStore.editor.chain().focus().insertContent({ type: 'gallery' }).run();
+        } else if (comp.action === 'form') {
+             editorStore.editor.chain().focus().insertContent({ type: 'formBlock' }).run();
         }
     };
 </script>

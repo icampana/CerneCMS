@@ -1,7 +1,50 @@
 <script>
-    import { Drawer, Label, Input, Checkbox, CloseButton, Select, Range } from 'flowbite-svelte';
+    import { Drawer, Label, Input, Checkbox, CloseButton, Select, Range, Button } from 'flowbite-svelte';
     import { sineIn } from 'svelte/easing';
     import { editorStore } from '../../stores/editor.svelte.js';
+    import { EditOutline, PlusOutline, CogSolid } from 'flowbite-svelte-icons';
+    import FormManager from '../editor/modals/FormManager.svelte';
+
+    let showFormManager = $state(false);
+    let editFormTargetId = $state(null);
+    let availableForms = $state([]);
+
+    // Fetch forms effect
+    $effect(() => {
+        if (editorStore.blockSettings.isOpen && editorStore.blockSettings.type === 'form') {
+            fetchForms();
+        }
+    });
+
+    async function fetchForms() {
+        try {
+            const res = await fetch('/api/forms');
+            if (res.ok) {
+                const data = await res.json();
+                availableForms = data.map(f => ({ value: f.id, name: f.name, slug: f.slug }));
+            }
+        } catch (e) {
+            console.error('Failed to fetch forms', e);
+        }
+    }
+
+    function handleFormCreated(form) {
+        availableForms = [...availableForms, { value: form.id, name: form.name, slug: form.slug }];
+        update('formId', form.id);
+        update('formName', form.name);
+        update('formSlug', form.slug);
+    }
+
+    // Helper for form select
+    function onFormSelect(e) {
+        const id = e.target.value;
+        const selected = availableForms.find(f => f.value == id);
+        if (selected) {
+            update('formId', id);
+            update('formName', selected.name);
+            update('formSlug', selected.slug);
+        }
+    }
     import { TrashBinSolid } from 'flowbite-svelte-icons';
 
     // Sync open state from store
@@ -414,9 +457,49 @@
                 </button>
             </div>
         </div>
+    {:else if editorStore.blockSettings.type === 'form'}
+        <div class="space-y-6">
+            <div>
+                <Label class="mb-2">Select Form</Label>
+                <Select
+                    items={availableForms}
+                    value={editorStore.blockSettings.attributes.formId}
+                    onchange={onFormSelect}
+                    placeholder="Choose a form..."
+                />
+            </div>
+
+            <div class="flex flex-col gap-2">
+                <Button color="light" size="sm" onclick={() => { editFormTargetId = null; showFormManager = true; }}>
+                    <PlusOutline class="w-4 h-4 mr-2" /> Create New Form
+                </Button>
+
+                {#if editorStore.blockSettings.attributes.formId}
+                    <Button color="alternative" size="sm" onclick={() => { editFormTargetId = editorStore.blockSettings.attributes.formId; showFormManager = true; }}>
+                        <EditOutline class="w-4 h-4 mr-2" /> Edit Selected Form
+                    </Button>
+
+                    <Button color="light" size="sm" href={`/api/forms/${editorStore.blockSettings.attributes.formId}/export`} download target="_blank">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                        Download Responses (CSV)
+                    </Button>
+                {/if}
+            </div>
+
+            <div class="p-4 bg-gray-50 rounded-lg text-sm text-gray-500">
+                <p>Forms responses are stored securely. You can view submissions in the Forms dashboard.</p>
+            </div>
+        </div>
     {:else}
         <div class="text-gray-500 text-sm">
             Select a block to edit its settings.
         </div>
     {/if}
 </Drawer>
+
+<FormManager
+    bind:open={showFormManager}
+    editFormId={editFormTargetId}
+    onClose={() => showFormManager = false}
+    onSave={handleFormCreated}
+/>

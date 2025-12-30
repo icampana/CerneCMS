@@ -50,7 +50,20 @@ Flight::group('/api', function () {
     Flight::route('GET /settings', [\app\controllers\SettingsController::class, 'index']);
     Flight::route('PUT /settings', [\app\controllers\SettingsController::class, 'update']);
     Flight::route('POST /settings/cache-clear', [\app\controllers\SettingsController::class, 'clearCache']);
+
+    // Form Management Routes
+    Flight::route('GET /forms', [\app\controllers\FormController::class, 'index']);
+    Flight::route('GET /forms/@id', [\app\controllers\FormController::class, 'show']);
+    Flight::route('POST /forms', [\app\controllers\FormController::class, 'create']);
+    Flight::route('PUT /forms/@id', [\app\controllers\FormController::class, 'update']);
+    Flight::route('DELETE /forms/@id', [\app\controllers\FormController::class, 'delete']);
+    Flight::route('GET /forms/@id/responses', [\app\controllers\FormController::class, 'responses']);
+    Flight::route('DELETE /forms/@id/responses/@rid', [\app\controllers\FormController::class, 'deleteResponse']);
+    Flight::route('GET /forms/@id/export', [\app\controllers\FormController::class, 'export']);
 }, [new \app\middleware\AuthMiddleware()]);
+
+// Form Submissions (Public)
+Flight::route('POST /forms/@slug/submit', [\app\controllers\FormSubmissionController::class, 'submit']);
 
 // Frontend Routes (Catch-all for pages)
 Flight::route('/', [FrontendController::class, 'renderPage']);

@@ -13,6 +13,7 @@
     import CalendarExtension from '../editor/extensions/Calendar.js'; // Import Calendar Extension
     import CTAExtension from '../editor/extensions/CTA.js'; // Import CTA Extension
     import GalleryExtension from '../editor/extensions/Gallery.js'; // Import Gallery Extension
+    import FormExtension from '../editor/extensions/Form.js'; // Import Form Extension
     import Grid from '../extensions/Grid';
 import Column from '../extensions/Column';
 import DragHandle from '@tiptap/extension-drag-handle';
@@ -121,6 +122,7 @@ import DragHandle from '@tiptap/extension-drag-handle';
                     CalendarExtension, // Add to extensions list
                     CTAExtension,
                     GalleryExtension, // Add Gallery Extension
+                    FormExtension, // Add Form Extension
                     Table.configure({
                         resizable: true,
                         HTMLAttributes: {
@@ -226,6 +228,8 @@ import DragHandle from '@tiptap/extension-drag-handle';
                                 view.dispatch(view.state.tr.insert(pos, view.state.schema.nodes.fullCalendar.create({ showAllCalendars: false })));
                             } else if (type === 'gallery') {
                                 view.dispatch(view.state.tr.insert(pos, view.state.schema.nodes.gallery.create()));
+                            } else if (type === 'form') {
+                                view.dispatch(view.state.tr.insert(pos, view.state.schema.nodes.formBlock.create()));
                             } else if (type === 'heading') {
                                 view.dispatch(view.state.tr.insert(pos, view.state.schema.nodes.heading.create({ level: 2 }, view.state.schema.text('Heading 2'))));
                             } else {

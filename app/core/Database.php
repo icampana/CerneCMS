@@ -47,6 +47,22 @@ class Database
             $db->exec("CREATE INDEX idx_blocks_page_id ON blocks(page_id)");
         }
 
+        // Check if 'forms' table exists
+        $stmt = $db->query("SELECT name FROM sqlite_master WHERE type='table' AND name='forms'");
+        if (!$stmt->fetch()) {
+            $db->exec("CREATE TABLE forms (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                slug TEXT UNIQUE NOT NULL,
+                fields_json TEXT NOT NULL,
+                settings_json TEXT,
+                status TEXT DEFAULT 'active',
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            )");
+            $db->exec("CREATE INDEX idx_forms_slug ON forms(slug)");
+        }
+
         // Check if 'posts' table exists
         $stmt = $db->query("SELECT name FROM sqlite_master WHERE type='table' AND name='posts'");
 
