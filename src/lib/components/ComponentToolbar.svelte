@@ -8,7 +8,8 @@
         VideoCameraSolid,
         MinusOutline,
         CalendarMonthSolid,
-        BullhornSolid
+        BullhornSolid,
+        CameraPhotoSolid
     } from 'flowbite-svelte-icons';
     import { editorStore } from '../stores/editor.svelte.js';
 
@@ -16,6 +17,7 @@
         { type: 'text', label: 'Text', icon: FileLinesOutline, action: null }, // Drag only implicitly or default
         { type: 'heading', label: 'Heading', icon: TextSizeOutline, action: null },
         { type: 'image', label: 'Image', icon: ImageOutline, action: 'image' },
+        { type: 'gallery', label: 'Gallery', icon: CameraPhotoSolid, action: 'gallery' },
         { type: 'grid-2', label: '2 Col', icon: GridSolid, action: null },
         { type: 'grid-3', label: '3 Col', icon: GridSolid, action: null },
         { type: 'table', label: 'Table', icon: TableColumnSolid, action: 'table' },
@@ -50,6 +52,8 @@
              editorStore.editor.chain().focus().insertContent({ type: 'fullCalendar', attrs: { showAllCalendars: false } }).run();
         } else if (comp.action === 'cta') {
              editorStore.editor.chain().focus().insertContent({ type: 'cta' }).run();
+        } else if (comp.action === 'gallery') {
+             editorStore.editor.chain().focus().insertContent({ type: 'gallery' }).run();
         }
     };
 </script>

@@ -1,7 +1,8 @@
 <script>
-    import { Drawer, Label, Input, Checkbox, CloseButton } from 'flowbite-svelte';
+    import { Drawer, Label, Input, Checkbox, CloseButton, Select, Range } from 'flowbite-svelte';
     import { sineIn } from 'svelte/easing';
     import { editorStore } from '../../stores/editor.svelte.js';
+    import { TrashBinSolid } from 'flowbite-svelte-icons';
 
     // Sync open state from store
     let drawerOpen = $state(false);
@@ -30,6 +31,59 @@
         const checked = e.target.checked;
         console.log('Checkbox changed to:', checked);
         update('lightbox', checked);
+    }
+
+    function updateImageCaption(index, caption) {
+        const node = editorStore.blockSettings.node;
+        if (!node || !node.content || !Array.isArray(node.content)) return;
+
+        const newContent = [...node.content];
+        newContent[index] = {
+            ...newContent[index],
+            attrs: {
+                ...newContent[index].attrs,
+                caption
+            }
+        };
+
+        const callback = editorStore.blockSettings.updateCallback;
+        if (callback) {
+            callback({ content: newContent });
+        }
+    }
+
+    function removeImage(index) {
+        const node = editorStore.blockSettings.node;
+        if (!node || !node.content || !Array.isArray(node.content)) return;
+
+        const newContent = node.content.filter((_, i) => i !== index);
+        const callback = editorStore.blockSettings.updateCallback;
+        if (callback) {
+            callback({ content: newContent });
+        }
+    }
+
+    function addImage() {
+        const callback = editorStore.blockSettings.updateCallback;
+        editorStore.closeBlockSettings();
+        editorStore.openMediaLibrary((url) => {
+            const node = editorStore.blockSettings.node;
+            const currentContent = (node?.content && Array.isArray(node.content)) ? node.content : [];
+            const newImage = {
+                type: 'galleryItem',
+                attrs: {
+                    src: url,
+                    alt: '',
+                    caption: '',
+                    width: 800,
+                    height: 600
+                }
+            };
+
+            if (callback) {
+                callback({ content: [...currentContent, newImage] });
+            }
+        });
     }
 </script>
 
@@ -210,6 +264,154 @@
                          <span class="text-sm text-gray-500">Select Background Image</span>
                     </div>
                 {/if}
+            </div>
+        </div>
+    {:else if editorStore.blockSettings.type === 'gallery'}
+        <div class="space-y-6">
+            <div>
+                <Label class="mb-2">Layout</Label>
+                <div class="flex gap-2">
+                    <button
+                        class="flex-1 p-2 border rounded hover:bg-gray-50 dark:hover:bg-gray-700 {editorStore.blockSettings.attributes.layout === 'masonry' ? 'border-blue-500 ring-1 ring-blue-500' : 'border-gray-200'}"
+                        onclick={() => update('layout', 'masonry')}
+                        title="Masonry"
+                    >
+                        <div class="space-y-1">
+                            <div class="flex gap-1">
+                                <div class="h-4 w-1/3 bg-gray-300 rounded"></div>
+                                <div class="h-6 w-1/3 bg-gray-400 rounded"></div>
+                                <div class="h-3 w-1/3 bg-gray-300 rounded"></div>
+                            </div>
+                        </div>
+                        <div class="text-xs mt-1 text-center">Masonry</div>
+                    </button>
+                    <button
+                        class="flex-1 p-2 border rounded hover:bg-gray-50 dark:hover:bg-gray-700 {editorStore.blockSettings.attributes.layout === 'slideshow' ? 'border-blue-500 ring-1 ring-blue-500' : 'border-gray-200'}"
+                        onclick={() => update('layout', 'slideshow')}
+                        title="Slideshow"
+                    >
+                        <div class="h-6 bg-gray-300 w-full rounded flex items-center justify-center">
+                            <div class="h-3 w-3 bg-gray-500 rounded-full"></div>
+                        </div>
+                        <div class="text-xs mt-1 text-center">Slideshow</div>
+                    </button>
+                    <button
+                        class="flex-1 p-2 border rounded hover:bg-gray-50 dark:hover:bg-gray-700 {editorStore.blockSettings.attributes.layout === 'standard' || !editorStore.blockSettings.attributes.layout ? 'border-blue-500 ring-1 ring-blue-500' : 'border-gray-200'}"
+                        onclick={() => update('layout', 'standard')}
+                        title="Standard"
+                    >
+                        <div class="grid grid-cols-3 gap-1">
+                            <div class="h-4 bg-gray-300 rounded"></div>
+                            <div class="h-4 bg-gray-400 rounded"></div>
+                            <div class="h-4 bg-gray-300 rounded"></div>
+                        </div>
+                        <div class="text-xs mt-1 text-center">Standard</div>
+                    </button>
+                </div>
+            </div>
+
+            <div>
+                <Label class="mb-2">Columns</Label>
+                <Select
+                    value={editorStore.blockSettings.attributes.columns || 3}
+                    onchange={(e) => update('columns', parseInt(e.target.value))}
+                >
+                    <option value={1}>1 Column</option>
+                    <option value={2}>2 Columns</option>
+                    <option value={3}>3 Columns</option>
+                    <option value={4}>4 Columns</option>
+                    <option value={5}>5 Columns</option>
+                </Select>
+            </div>
+
+            <div>
+                <Label class="mb-2">Gap Size: {editorStore.blockSettings.attributes.gap || 8}px</Label>
+                <Range
+                    min={0}
+                    max={32}
+                    step={4}
+                    value={editorStore.blockSettings.attributes.gap || 8}
+                    oninput={(e) => update('gap', parseInt(e.target.value))}
+                />
+            </div>
+
+            <div class="pt-4 border-t border-gray-100">
+                <Checkbox
+                    checked={editorStore.blockSettings.attributes.showCaptions || false}
+                    onchange={(e) => update('showCaptions', e.target.checked)}
+                >
+                    Show Captions
+                </Checkbox>
+                <p class="text-xs text-gray-400 mt-2 ml-6">
+                    Display captions below each image.
+                </p>
+            </div>
+
+            {#if editorStore.blockSettings.attributes.layout === 'slideshow'}
+                <div class="pt-4 border-t border-gray-100">
+                    <Checkbox
+                        checked={editorStore.blockSettings.attributes.autoplay !== false}
+                        onchange={(e) => update('autoplay', e.target.checked)}
+                    >
+                        Auto-play Slideshow
+                    </Checkbox>
+                    <p class="text-xs text-gray-400 mt-2 ml-6">
+                        Automatically advance slides.
+                    </p>
+                </div>
+
+                {#if editorStore.blockSettings.attributes.autoplay !== false}
+                    <div>
+                        <Label class="mb-2">Auto-play Speed: {editorStore.blockSettings.attributes.autoplaySpeed / 1000}s</Label>
+                        <Range
+                            min={1000}
+                            max={10000}
+                            step={500}
+                            value={editorStore.blockSettings.attributes.autoplaySpeed || 3000}
+                            oninput={(e) => update('autoplaySpeed', parseInt(e.target.value))}
+                        />
+                    </div>
+                {/if}
+            {/if}
+
+            <div class="pt-4 border-t border-gray-100">
+                <Label class="mb-3">Images</Label>
+                <div class="space-y-3">
+                    {#each (editorStore.blockSettings.node?.content ?? []) as image, index}
+                        <div class="flex items-start gap-3 p-2 bg-gray-50 rounded-lg">
+                            <div class="w-5 h-5 text-gray-400 mt-1 cursor-move flex items-center justify-center">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"></path></svg>
+                            </div>
+                            <img
+                                src={image.attrs?.src}
+                                alt={image.attrs?.alt}
+                                class="w-16 h-16 object-cover rounded border border-gray-200"
+                            />
+                            <div class="flex-1 min-w-0">
+                                <Input
+                                    type="text"
+                                    value={image.attrs?.caption || ''}
+                                    oninput={(e) => updateImageCaption(index, e.target.value)}
+                                    placeholder="Caption (optional)"
+                                    class="text-sm"
+                                />
+                            </div>
+                            <button
+                                class="text-red-500 hover:text-red-700 p-1"
+                                onclick={() => removeImage(index)}
+                                title="Remove image"
+                            >
+                                <TrashBinSolid class="w-5 h-5" />
+                            </button>
+                        </div>
+                    {/each}
+                </div>
+                <button
+                    class="mt-3 w-full py-2 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:bg-gray-50 hover:border-gray-400 transition-colors"
+                    onclick={addImage}
+                >
+                    + Add Image
+                </button>
             </div>
         </div>
     {:else}

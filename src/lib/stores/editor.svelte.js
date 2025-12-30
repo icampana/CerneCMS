@@ -12,6 +12,7 @@
     import { HorizontalRule } from '@tiptap/extension-horizontal-rule';
     import CalendarExtension from '../editor/extensions/Calendar.js'; // Import Calendar Extension
     import CTAExtension from '../editor/extensions/CTA.js'; // Import CTA Extension
+    import GalleryExtension from '../editor/extensions/Gallery.js'; // Import Gallery Extension
     import Grid from '../extensions/Grid';
 import Column from '../extensions/Column';
 import DragHandle from '@tiptap/extension-drag-handle';
@@ -119,6 +120,7 @@ import DragHandle from '@tiptap/extension-drag-handle';
                     Column,
                     CalendarExtension, // Add to extensions list
                     CTAExtension,
+                    GalleryExtension, // Add Gallery Extension
                     Table.configure({
                         resizable: true,
                         HTMLAttributes: {
@@ -222,6 +224,8 @@ import DragHandle from '@tiptap/extension-drag-handle';
                                 view.dispatch(view.state.tr.insert(pos, view.state.schema.nodes.cta.create()));
                             } else if (type === 'calendar') {
                                 view.dispatch(view.state.tr.insert(pos, view.state.schema.nodes.fullCalendar.create({ showAllCalendars: false })));
+                            } else if (type === 'gallery') {
+                                view.dispatch(view.state.tr.insert(pos, view.state.schema.nodes.gallery.create()));
                             } else if (type === 'heading') {
                                 view.dispatch(view.state.tr.insert(pos, view.state.schema.nodes.heading.create({ level: 2 }, view.state.schema.text('Heading 2'))));
                             } else {
@@ -423,12 +427,13 @@ import DragHandle from '@tiptap/extension-drag-handle';
         }
 
         // Block Settings Methods
-        openBlockSettings(type, attributes, updateCallback) {
+        openBlockSettings(type, attributes, updateCallback, node = null) {
             this.blockSettings = {
                 isOpen: true,
                 type,
                 attributes: { ...attributes }, // Clone to avoid direct mutation issues
-                updateCallback
+                updateCallback,
+                node // Pass the full node for gallery content access
             };
         }
 
