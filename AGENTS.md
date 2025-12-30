@@ -14,35 +14,49 @@ You are an expert full-stack developer specializing in PHP and Svelte. Your miss
 ## Project Knowledge
 
 ### Tech Stack
-- **Preferred Package Manager**: pnpm
-- **Backend**: PHP (FlightPHP framework)
+
+#### Back Office (Admin Panel)
+*The interactive editor and management interface.*
 - **Frontend**: Svelte 5 (with Vite)
+- **State Management**: Svelte 5 Runes (`$state`, `$derived`).
 - **Editor**: Tiptap for the block-based editor.
 - **UI Library**: Flowbite Svelte components. See docs at `https://flowbite-svelte.com`.
-  - **Icons**: NEVER guess icon names. They often differ from standard naming (e.g., `Angle` vs `Arrow` or `Chevron`). NOT all icons have both Solid and Outline variants (e.g., `PlusOutline` exists, but `PlusSolid` DOES NOT). ALWAYS verify the specific icon existence by running `ls node_modules/flowbite-svelte-icons/dist | grep -i <IconName>` before using it.
+  - **Icons**: NEVER guess icon names. Verify existence: `ls node_modules/flowbite-svelte-icons/dist/*.svelte | grep -i <IconName>`.
+
+#### Public Site (Frontend)
+*The actual website visited by end-users.*
+- **Rendering Engine**: PHP (FlightPHP framework + Custom Renderers).
+- **Styling**: TailwindCSS (compiled via the same build process).
+- **Logic**: Minimal Vanilla JS (for interactivity like mobile menus or galleries).
+- **Templates**: PHP files in `app/views/` or rendered blocks via `BlockRenderer.php`.
+
+#### Core & Data
+- **Language**: PHP 8.2+
 - **Database**: SQLite. The database file is at `content/database/cms.sqlite`.
+- **Package Manager**: pnpm
 
 ### File Structure
-- `src/` – Svelte frontend source code (You WRITE here).
+- `src/` – **Admin Svelte App** (Back Office). Compiled to `public/assets/`.
   - `src/App.svelte`: Main admin container.
   - `src/lib/components/Editor.svelte`: The core Tiptap editor component.
   - `src/lib/stores/editor.svelte.js`: Central state management for the editor.
-- `app/` – PHP backend source code (You WRITE here).
-  - `app/controllers/ApiController.php`: REST API endpoints.
-  - `app/services/BlockRenderer.php`: Converts block JSON to HTML.
-  - `app/models/`: ActiveRecord models for database tables.
-- `public/` – Web server root. Contains the main `index.php` and compiled assets.
-- `content/` – User-generated content, uploads, and the database.
+- `app/` – **PHP Backend & Public Renderer**.
+  - `app/controllers/ApiController.php`: REST API for the Admin App to talk to.
+  - `app/services/BlockRenderer.php`: Converts block JSON (saved by Admin) to HTML (seen by public).
+  - `app/models/`: ActiveRecord models.
+- `public/` – Web server root.
+- `content/` – User content (uploads, DB).
 
 ## Development Practices
 
-### Adding a New Block Type (Example Workflow)
-This is a good example of the development process.
+### Adding a New Block Type
+**See the detailed guide: [Agent Guide: Creating Blocks & Settings](docs/agent-guide-widget-settings.md)**
 
-1.  **Backend**: In `app/services/BlockRenderer.php`, add a new case to handle rendering the block's JSON to HTML on the frontend.
-2.  **Frontend**: In `src/lib/stores/editor.svelte.js`, define a new Tiptap extension for the block.
-3.  **Frontend**: In `src/lib/components/ComponentToolbar.svelte`, add a new icon/button to allow users to add the block via drag-and-drop.
-4.  **Frontend**: Update the `handleDrop` logic in `src/lib/stores/editor.svelte.js` to correctly insert the new block into the editor state.
+Overview of the process:
+1.  **Backend**: Update `BlockRenderer.php` to render the JSON to HTML.
+2.  **Admin (Tiptap)**: Create the usage extension and handling.
+3.  **Admin (UI)**: Add the toolbar item and drag-and-drop logic.
+4.  **Admin (Settings)**: Add configuration fields to the Settings Drawer.
 
 ### Testing
 *No formal testing suite is currently configured.* Manually verify your changes in the browser. Pay close attention to console logs for both the browser and the PHP server terminal.
@@ -52,7 +66,7 @@ Upon completion of a new feature, you are responsible for documenting its implem
 
 - **Location**: Create new markdown files in the `docs/` directory.
 - **Content**: Describe the feature's architecture, key components, and any significant implementation details (e.g., how it integrates with existing systems, data flows, important code snippets).
-- **Style**: Follow the structure and detail level of the "Adding a New Block Type (Example Workflow)" in this document.
+- **Style**: Follow the structure and detail level of the [Agent Guide: Creating Blocks & Settings](docs/agent-guide-widget-settings.md).
 - **Goal**: Ensure that another developer can understand how the feature is implemented by reading your documentation.
 
 ## Boundaries

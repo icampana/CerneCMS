@@ -4,14 +4,73 @@
 
 To maintain a clean and focused editing experience in CerneCMS, we avoid cluttering the editor surface with inline forms. Instead, we use a centralized **Block Settings Drawer** for configuring block attributes (e.g., captions, toggles, alignment).
 
-## The Pattern
+## Creating a New Block Type
 
-1.  **Trigger**: The block component (e.g., `ImageBlock`) displays a "Settings" (gear) button only when selected or hovered.
-2.  **Action**: Clicking the button opens the global `BlockSettingsDrawer` via the `editorStore`.
-3.  **State**: The store holds the current block's type, attributes, and an update callback.
-4.  **UI**: The drawer renders the appropriate form fields based on the block type.
+This guide covers the end-to-end process of creating a new block (widget) in CerneCMS, from backend rendering to frontend editing and configuration.
 
-## Implementation Steps
+### 1. Backend: Block Rendering (PHP)
+**File:** `app/services/BlockRenderer.php`
+
+Define how the block's JSON data matches to HTML for the public frontend. Add a new `case` to the `renderNode` switch statement.
+
+```php
+case 'my-block':
+    $title = htmlspecialchars($node['attrs']['title'] ?? '');
+    return "<div class=\"my-block\"><h3>{$title}</h3></div>";
+```
+
+### 2. Frontend: Tiptap Extension (JS)
+**Location:** `src/lib/editor/extensions/` or inline in `src/lib/stores/editor.svelte.js`
+
+Define the Tiptap node extension. This tells the editor how to treat the block (e.g., as a block, atomic, etc.) and how to render it in the editor.
+
+**File:** `src/lib/stores/editor.svelte.js` (Import section)
+```javascript
+import MyBlockExtension from '../editor/extensions/MyBlock.js';
+```
+
+**File:** `src/lib/stores/editor.svelte.js` (Extensions array)
+```javascript
+extensions: [
+    // ...
+    MyBlockExtension,
+    // ...
+]
+```
+
+### 3. Frontend: Drag-and-Drop Handling
+**File:** `src/lib/stores/editor.svelte.js`
+
+Update the `handleDrop` function in the `editorProps` to handle the new block type when dropped from the toolbar.
+
+```javascript
+} else if (type === 'my-block') {
+    view.dispatch(view.state.tr.insert(pos, view.state.schema.nodes.myBlock.create()));
+}
+```
+
+### 4. Frontend: Toolbar Icon
+**File:** `src/lib/components/ComponentToolbar.svelte`
+
+Add a drag source (and optionally a click handler) for the new block.
+
+```svelte
+<div
+    draggable="true"
+    on:dragstart={(e) => handleDragStart(e, 'my-block')}
+    class="..."
+>
+    <!-- Icon -->
+</div>
+```
+
+---
+
+## Adding Settings to a Block (The Drawer Pattern)
+
+To maintain a clean and focused editing experience in CerneCMS, we avoid cluttering the editor surface with inline forms. Instead, we use a centralized **Block Settings Drawer** for configuring block attributes (e.g., captions, toggles, alignment).
+
+### Implementation Steps
 
 When adding settings to a new or existing widget, follow these steps:
 
