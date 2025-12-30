@@ -14,6 +14,7 @@ if (target) {
   const app = mount(App, {
     target: target,
   })
+} else {
     // We are likely on the frontend, so verify if we need to init lightbox
     // We can just init it blindly as it checks for selectors
     const initFrontend = () => {
