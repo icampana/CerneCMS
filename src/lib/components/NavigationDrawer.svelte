@@ -1,14 +1,17 @@
 <script>
-    import { Drawer, Sidebar, SidebarBrand, SidebarGroup, SidebarItem, SidebarWrapper, CloseButton } from 'flowbite-svelte';
+    import { Drawer, Sidebar, SidebarBrand, SidebarGroup, SidebarItem, SidebarWrapper, CloseButton, Button } from 'flowbite-svelte';
     import { sineIn } from 'svelte/easing';
     import { editorStore } from '../stores/editor.svelte.js';
+    import { themeStore } from '../stores/theme.svelte.js';
     import { location } from 'svelte-spa-router';
     import {
         GridSolid,
         FileLinesSolid,
         ImageSolid,
         CogSolid,
-        ListMusicSolid
+        ListMusicSolid,
+        SunSolid,
+        MoonSolid
     } from 'flowbite-svelte-icons';
 
     let transitionParams = {
@@ -76,7 +79,7 @@
     <div class="px-2">
         <Sidebar class="w-full">
             <SidebarWrapper class="bg-transparent">
-                <SidebarBrand {site} classes={{ img: "h-6 w-6" }} />
+                <SidebarBrand {site} classes={{ img: "h-8 w-8 bg-white border border-white rounded-full px-1" }} />
                 <!-- Main Navigation -->
                 <SidebarGroup>
                     <p class="px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">Content</p>
@@ -121,8 +124,23 @@
 
     <!-- Footer -->
     <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800">
-        <p class="text-xs text-gray-500 dark:text-gray-400 text-center">
-            v1.0.0 • Made with ❤️
-        </p>
+        <div class="flex items-center justify-between mb-2">
+            <p class="text-xs text-gray-500 dark:text-gray-400">
+                v1.0.0 • Made with ❤️
+            </p>
+            <Button
+                color="alternative"
+                size="xs"
+                class="!p-2"
+                onclick={() => themeStore.toggle()}
+                title={themeStore.isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+            >
+                {#if themeStore.isDark}
+                    <SunSolid class="w-4 h-4 text-yellow-400" />
+                {:else}
+                    <MoonSolid class="w-4 h-4 text-gray-600" />
+                {/if}
+            </Button>
+        </div>
     </div>
 </Drawer>

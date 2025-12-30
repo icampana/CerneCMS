@@ -29,7 +29,7 @@
     };
 </script>
 
-<div class="min-h-screen bg-gray-50 flex flex-col relative">
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col relative transition-colors duration-200">
 
     <!-- Navigation Drawer -->
     <NavigationDrawer />
@@ -37,8 +37,8 @@
     <!-- Hamburger Trigger (Fixed top-left) -->
     {#if !editorStore.zenModeEnabled}
     <div class="fixed top-4 left-4 z-30 print:hidden">
-        <Button color="light" class="!p-2 shadow-sm bg-white/80 backdrop-blur" onclick={(e) => { e.stopPropagation(); editorStore.toggleNavDrawer(); }}>
-            <BarsFromLeftOutline class="w-6 h-6 text-gray-600" />
+        <Button color="light" class="!p-2 shadow-sm bg-white/80 dark:bg-gray-800/80 backdrop-blur" onclick={(e) => { e.stopPropagation(); editorStore.toggleNavDrawer(); }}>
+            <BarsFromLeftOutline class="w-6 h-6 text-gray-600 dark:text-gray-300" />
         </Button>
     </div>
     {/if}
@@ -57,10 +57,10 @@
 <!-- Global Media Library Modal -->
 {#if editorStore.mediaLibraryOpen}
     <div class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-4xl overflow-hidden max-h-[90vh] flex flex-col">
-            <div class="p-4 border-b border-gray-100 flex justify-between items-center">
-                <h3 class="font-bold text-lg">Select Image</h3>
-                <button onclick={() => editorStore.closeMediaLibrary()} class="p-2 hover:bg-gray-100 rounded-full">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-4xl overflow-hidden max-h-[90vh] flex flex-col">
+            <div class="p-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
+                <h3 class="font-bold text-lg text-gray-900 dark:text-white">Select Image</h3>
+                <button onclick={() => editorStore.closeMediaLibrary()} class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full text-gray-500 dark:text-gray-400">
                     ✕
                 </button>
             </div>
