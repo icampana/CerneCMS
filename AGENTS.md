@@ -22,6 +22,11 @@ You are an expert full-stack developer specializing in PHP and Svelte. Your miss
 - **Editor**: Tiptap for the block-based editor.
 - **UI Library**: Flowbite Svelte components. See docs at `https://flowbite-svelte.com`.
   - **Icons**: NEVER guess icon names. Verify existence: `ls node_modules/flowbite-svelte-icons/dist/*.svelte | grep -i <IconName>`.
+  - **⚠️ CRITICAL: Svelte 5 Syntax**: This project uses **Svelte 5**. You MUST follow Svelte 5 syntax:
+    - **Event Handlers**: Use `onclick`, `oninput`, `onchange` (NOT `on:click`, `on:input`, `on:change`).
+    - **State**: Use `$state()`, `$derived()`, `$effect()` runes (NOT `let` with `$:` reactive statements).
+    - **Slots**: `svelte:fragment slot="name"` is still valid, but `{#snippet name}...{/snippet}` is the new Svelte 5 pattern.
+    - **Binding**: `bind:value` syntax remains the same.
 
 #### Public Site (Frontend)
 *The actual website visited by end-users.*
