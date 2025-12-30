@@ -33,6 +33,7 @@ You are an expert full-stack developer specializing in PHP and Svelte. Your miss
 #### Core & Data
 - **Language**: PHP 8.2+
 - **Database**: SQLite. The database file is at `content/database/cms.sqlite`.
+  - **Guide**: [Agent Guide: Database Interaction](docs/agent-guide-database.md) - ***Start here to avoid fatal errors!***
 - **Package Manager**: pnpm
 
 ### File Structure
