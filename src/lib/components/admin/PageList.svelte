@@ -2,12 +2,14 @@
     import { onMount } from 'svelte';
     import { push } from 'svelte-spa-router';
     import { Button } from 'flowbite-svelte';
-    import { PlusOutline, TrashBinOutline } from 'flowbite-svelte-icons';
-    import DataGrid from '../DataGrid.svelte';
+    import { PlusOutline, TrashBinOutline, FileOutline } from 'flowbite-svelte-icons';
+    import Editor from '../Editor.svelte';
     import CardView from './CardView.svelte';
+    import DataGrid from '../DataGrid.svelte';
     import ViewToggle from '../ui/ViewToggle.svelte';
     import SearchBar from '../ui/SearchBar.svelte';
     import FilterDropdown from '../ui/FilterDropdown.svelte';
+
     import { pagesStore } from '../../stores/pagesStore.svelte.js';
 
     // Columns for the Table View
@@ -145,8 +147,11 @@
                     onViewChange={handleViewChange}
                 />
             {/if}
+
         </div>
     </div>
+
+
 
     <!-- Content -->
     <div class="p-4 md:p-6">

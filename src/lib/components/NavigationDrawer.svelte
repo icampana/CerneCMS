@@ -34,7 +34,15 @@
     function handleClose() {
         editorStore.closeNavDrawer();
     }
+
+    function handleKeydown(e) {
+        if (e.key === 'Escape' && isOpen) {
+            handleClose();
+        }
+    }
 </script>
+
+<svelte:window onkeydown={handleKeydown} />
 
 <!-- Note: dismissable={true} is default, but we might want {false} if click-outside is buggy.
      Let's try {true} first with the stopPropagation fix in App.svelte.

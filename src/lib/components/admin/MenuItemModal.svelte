@@ -34,8 +34,7 @@
     }
   });
 
-  function handleInternalSelect(event) {
-    const page = event.detail;
+  function handleInternalSelect(page) {
     targetPageId = page.id;
     if (!title) {
         title = page.title;
@@ -72,7 +71,7 @@
         <Label class="mb-2">Select Page</Label>
         <InternalLinkPicker
             selectedPageId={targetPageId}
-            onselect={(page) => handleInternalSelect({ detail: page })}
+            onselect={handleInternalSelect}
         />
         {#if targetPageId}
             <div class="mt-1 text-xs text-green-600 flex items-center">

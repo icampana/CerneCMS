@@ -1,5 +1,5 @@
 <script>
-    import { FileCloneSolid, TrashBinSolid, CloseCircleSolid } from 'flowbite-svelte-icons';
+    import { FileCloneSolid, TrashBinSolid, CloseCircleSolid, ArrowUpOutline, ArrowDownOutline } from 'flowbite-svelte-icons';
     import { editorStore } from '../../stores/editor.svelte.js';
 
     let menuRef = $state(null);
@@ -41,6 +41,21 @@
         class="fixed z-50 w-44 bg-white rounded-lg shadow-lg border border-gray-200 py-1"
         style={menuStyle}
     >
+        <button
+            onclick={() => editorStore.moveNodeUp()}
+            class="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
+        >
+            <ArrowUpOutline class="w-4 h-4" />
+            Move Up
+        </button>
+        <button
+            onclick={() => editorStore.moveNodeDown()}
+            class="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
+        >
+            <ArrowDownOutline class="w-4 h-4" />
+            Move Down
+        </button>
+        <div class="border-t border-gray-100 my-1"></div>
         <button
             onclick={() => editorStore.duplicateNode()}
             class="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"

@@ -10,6 +10,7 @@ export class PagesStore {
     searchQuery = $state('');
     statusFilter = $state('all');
     selectedIds = $state([]);
+    pendingDeletes = $state([]);
 
     // Load pages from API
     async loadPages() {
@@ -125,24 +126,53 @@ export class PagesStore {
         return this.selectedIds.length > 0 && !this.allSelected;
     }
 
-    // Delete a single page
+    // Soft delete a single page
     async deletePage(page) {
+        // Optimistic UI - remove from list immediately
+        const pageData = { ...page };
+        this.pages = this.pages.filter(p => p.id !== page.id);
+        this.selectedIds = this.selectedIds.filter(id => id !== page.id);
+
+        // Store for potential undo
+        const deleteEntry = {
+            page: pageData,
+            timer: setTimeout(() => this.confirmDelete(page.id), 5000)
+        };
+        this.pendingDeletes.push(deleteEntry);
+
+        // Show undo toast
+        editorStore.showUndoToast('Page deleted', () => this.undoDelete(page.id));
+        return true;
+    }
+
+    // Confirm physical delete after timeout
+    async confirmDelete(pageId) {
+        // Remove from pending list
+        this.pendingDeletes = this.pendingDeletes.filter(d => d.page.id !== pageId);
+
         try {
-            const res = await fetch(`/api/pages/${page.id}`, {
+            const res = await fetch(`/api/pages/${pageId}`, {
                 method: 'DELETE'
             });
             if (!res.ok) throw new Error('Failed to delete page');
-
-            // Optimistic UI: remove from local state
-            this.pages = this.pages.filter(p => p.id !== page.id);
-            this.selectedIds = this.selectedIds.filter(id => id !== page.id);
-
-            editorStore.showToast('Page deleted successfully', 'success');
-            return true;
+            console.log('Page permanently deleted:', pageId);
         } catch (e) {
-            console.error('Error deleting page:', e);
-            editorStore.showToast('Failed to delete page', 'error');
-            return false;
+            console.error('Error confirming delete:', e);
+            // If failed, maybe restore it? Or just log.
+            // For now, we assume it's gone from UI.
+        }
+    }
+
+    // Undo delete
+    undoDelete(pageId) {
+        const entry = this.pendingDeletes.find(d => d.page.id === pageId);
+        if (entry) {
+            clearTimeout(entry.timer);
+            // Restore to list (prepend or append? let's prepend to see it)
+            this.pages = [entry.page, ...this.pages];
+            // Remove from pending
+            this.pendingDeletes = this.pendingDeletes.filter(d => d.page.id !== pageId);
+            editorStore.showToast('Page restored', 'success');
         }
     }
 

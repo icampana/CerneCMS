@@ -15,8 +15,7 @@
       pageSlug = '';
   }
 
-  function handleInternalSelect(event) {
-      const page = event.detail;
+  function handleInternalSelect(page) {
       pageSlug = `/${page.slug}`;
       // Maybe also title if needed?
   }
@@ -60,7 +59,7 @@
         {#if linkType === 'internal'}
             <div>
                 <Label class="mb-2">Search Page</Label>
-                <InternalLinkPicker on:select={handleInternalSelect} />
+                <InternalLinkPicker onselect={handleInternalSelect} />
                 {#if pageSlug}
                     <p class="text-xs text-green-600 mt-1">Linking to: {pageSlug}</p>
                 {/if}
@@ -73,10 +72,10 @@
         {/if}
 
         <div class="flex justify-between mt-4">
-            <Button color="red" size="sm" on:click={removeLink} outline>Remove Link</Button>
+            <Button color="red" size="sm" onclick={removeLink} outline>Remove Link</Button>
             <div class="flex gap-2">
-                <Button color="alternative" on:click={close}>Cancel</Button>
-                <Button on:click={save}>Insert</Button>
+                <Button color="alternative" onclick={close}>Cancel</Button>
+                <Button onclick={save}>Insert</Button>
             </div>
         </div>
     </div>

@@ -35,7 +35,7 @@
                 type="url"
                 placeholder="https://www.youtube.com/watch?v=..."
                 bind:value={url}
-                on:keydown={(e) => e.key === 'Enter' && handleConfirm()}
+                onkeydown={(e) => e.key === 'Enter' && handleConfirm()}
             />
         </div>
         <div class="flex justify-center gap-4">

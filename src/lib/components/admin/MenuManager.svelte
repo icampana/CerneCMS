@@ -1,8 +1,9 @@
 <script>
     import { onMount, tick } from 'svelte';
     import { Button, Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell, Modal, Label, Input, Checkbox } from 'flowbite-svelte';
-    import { EditSolid, TrashBinSolid, PlusOutline, AngleRightOutline, AngleLeftOutline, AngleUpOutline, AngleDownOutline } from 'flowbite-svelte-icons';
+    import { EditSolid, TrashBinSolid, PlusOutline, AngleRightOutline, AngleLeftOutline, AngleUpOutline, AngleDownOutline, ListMusicSolid } from 'flowbite-svelte-icons';
     import MenuEditor from './MenuEditor.svelte';
+
 
     // State
     let menus = $state([]);
@@ -151,6 +152,8 @@
             </TableBody>
         </Table>
     </div>
+
+
 {/if}
 
 <!-- Create/Edit Modal -->

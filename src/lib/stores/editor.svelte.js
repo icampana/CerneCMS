@@ -32,6 +32,9 @@ import DragHandle from '@tiptap/extension-drag-handle';
         isEditable = $state(true);
         isSaving = $state(false);
         lastSaved = $state(null);
+        autoSaveEnabled = $state(true);
+        isDirty = $state(false);
+        autoSaveTimer = null;
 
         // Media Library State
         mediaLibraryOpen = $state(false);
@@ -54,11 +57,37 @@ import DragHandle from '@tiptap/extension-drag-handle';
         toastVisible = $state(false);
         toastMessage = $state('');
         toastType = $state('success'); // 'success' or 'error'
+        undoCallback = $state(null);
 
         // Settings Drawer State
         settingsDrawerOpen = $state(false);
         // Navigation Drawer State
         navDrawerOpen = $state(false);
+        zenModeEnabled = $state(false);
+
+        toggleZenMode() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch((e) => {
+                    console.error(`Error attempting to enable fullscreen mode: ${e.message} (${e.name})`);
+                });
+                this.zenModeEnabled = true;
+                // Also close drawers if open
+                this.closeNavDrawer();
+                this.closeSettingsDrawer();
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+                this.zenModeEnabled = false;
+            }
+        }
+
+        exitZenMode() {
+             if (document.fullscreenElement) {
+                document.exitFullscreen();
+             }
+             this.zenModeEnabled = false;
+        }
 
         // SEO Fields
         metaTitle = $state('');
@@ -248,6 +277,10 @@ import DragHandle from '@tiptap/extension-drag-handle';
             content: this.content,
                 onUpdate: ({ editor }) => {
                     this.content = editor.getHTML();
+                    this.isDirty = true;
+                    if (this.autoSaveEnabled) {
+                        this.scheduleAutoSave();
+                    }
                 },
                 onTransaction: ({ editor }) => {
                     this.editor = editor;
@@ -259,6 +292,7 @@ import DragHandle from '@tiptap/extension-drag-handle';
         // But the init pattern above is cleaner (pass all refs from parent).
 
         destroy() {
+            this.cancelAutoSave();
              if (this.editor) {
                 this.editor.destroy();
                 this.editor = null;
@@ -298,9 +332,25 @@ import DragHandle from '@tiptap/extension-drag-handle';
             this.parentId = null;
             this.metaJson = {};
             this.setContent('<p>Start writing...</p>');
+            this.lastSaved = null;
+            this.isDirty = false;
         }
 
-        async save() {
+        scheduleAutoSave() {
+            if (this.autoSaveTimer) clearTimeout(this.autoSaveTimer);
+            this.autoSaveTimer = setTimeout(() => {
+                this.save(true);
+            }, 2000); // 2 second debounce
+        }
+
+        cancelAutoSave() {
+            if (this.autoSaveTimer) {
+                clearTimeout(this.autoSaveTimer);
+                this.autoSaveTimer = null;
+            }
+        }
+
+        async save(isAutoSave = false) {
             if (!this.editor) return;
 
             this.isSaving = true;
@@ -337,7 +387,10 @@ import DragHandle from '@tiptap/extension-drag-handle';
                 }
 
                 console.log('Saved:', result);
-                this.showToast('Page saved successfully', 'success');
+                if (!isAutoSave) {
+                    this.showToast('Page saved successfully', 'success');
+                }
+                this.isDirty = false;
                 return result;
             } catch (e) {
                 console.error('Save error:', e);
@@ -413,10 +466,29 @@ import DragHandle from '@tiptap/extension-drag-handle';
             this.toastMessage = message;
             this.toastType = type;
             this.toastVisible = true;
+            this.undoCallback = null;
             // Auto-hide after 3 seconds
             setTimeout(() => {
                 this.hideToast();
             }, 3000);
+        }
+
+        showUndoToast(message, undoCallback) {
+            this.toastMessage = message;
+            this.toastType = 'success';
+            this.toastVisible = true;
+            this.undoCallback = undoCallback;
+            // Longer duration for undo (5 seconds)
+            setTimeout(() => {
+                this.hideToast();
+            }, 5000);
+        }
+
+        undoAction() {
+            if (this.undoCallback) {
+                this.undoCallback();
+                this.hideToast();
+            }
         }
 
         hideToast() {
@@ -514,11 +586,87 @@ import DragHandle from '@tiptap/extension-drag-handle';
             this.closeBlockMenu();
         }
 
-        deleteNode() {
+        checkSelection() {
+            // Helper to check if we have a valid selection for block ops
             if (!this.editor || !this.currentBlockRange) {
                 this.closeBlockMenu();
-                return;
+                return false;
             }
+            return true;
+        }
+
+        moveNodeUp() {
+            if (!this.checkSelection()) return;
+
+            const { start, end, node } = this.currentBlockRange;
+            const pos = start - 1;
+            const doc = this.editor.state.doc;
+            const resolvedPos = doc.resolve(pos);
+            const index = resolvedPos.index(0);
+
+            if (index > 0) {
+                const prevNode = doc.child(index - 1);
+                // Insert at start of previous node
+                const insertPos = resolvedPos.before(1) - prevNode.nodeSize;
+                const json = node.toJSON();
+
+                this.editor.chain()
+                    .deleteRange({ from: pos, to: end + 1 })
+                    .insertContentAt(insertPos, json)
+                    .run();
+
+                this.closeBlockMenu();
+            } else {
+                this.closeBlockMenu();
+            }
+        }
+
+        moveNodeDown() {
+            if (!this.checkSelection()) return;
+            const { start, end, node } = this.currentBlockRange;
+            const pos = start - 1; // Start of node
+            const doc = this.editor.state.doc;
+            const resolvedPos = doc.resolve(pos);
+            const index = resolvedPos.index(0);
+
+            if (index < doc.childCount - 1) {
+                // There is a next node
+                const nextNode = doc.child(index + 1);
+                const insertPos = resolvedPos.after(1) + nextNode.nodeSize; // after(1) gives end of current node. + size of next gives AFTER next.
+                // wait, after(1) is end of current node.
+                // insertContentAt inserts BEFORE the pos? or splits?
+                // insertContentAt(pos) inserts at that position.
+                // If we want to insert AFTER next node, we need position AFTER next node.
+                // Current Node End: end + 1.
+                // Next Node Start: end + 1.
+                // Next Node End: (end + 1) + nextNode.nodeSize.
+
+                const targetPos = (end + 1) + nextNode.nodeSize;
+                 const json = node.toJSON();
+
+                this.editor.chain()
+                    .deleteRange({ from: pos, to: end + 1 })
+                    .insertContentAt(targetPos, json) // Be careful with index updates after delete!
+                    // If we delete first, the doc shrinks. targetPos becomes invalid/shifted.
+                    // Correct:
+                    // 1. Insert copy after next.
+                    // 2. Delete original.
+                    .run();
+
+                 // Better Re-implementation for Down:
+                 this.editor.chain()
+                    .insertContentAt(targetPos, json)
+                    .deleteRange({ from: pos, to: end + 1 })
+                    .run();
+
+                 this.closeBlockMenu();
+            } else {
+                 this.closeBlockMenu();
+            }
+        }
+
+        deleteNode() {
+            if (!this.checkSelection()) return;
 
             const { start, end } = this.currentBlockRange;
 

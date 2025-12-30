@@ -35,11 +35,13 @@
     <NavigationDrawer />
 
     <!-- Hamburger Trigger (Fixed top-left) -->
+    {#if !editorStore.zenModeEnabled}
     <div class="fixed top-4 left-4 z-30 print:hidden">
         <Button color="light" class="!p-2 shadow-sm bg-white/80 backdrop-blur" onclick={(e) => { e.stopPropagation(); editorStore.toggleNavDrawer(); }}>
             <BarsFromLeftOutline class="w-6 h-6 text-gray-600" />
         </Button>
     </div>
+    {/if}
 
     <!-- Main Content Area -->
     <!-- Added pt-14 to account for trigger button space if needed, or just let it float over -->
@@ -90,6 +92,14 @@
                 {/if}
             {/snippet}
             {editorStore.toastMessage}
+            {#if editorStore.undoCallback}
+                <button
+                    onclick={(e) => { e.stopPropagation(); editorStore.undoAction(); }}
+                    class="ml-3 text-sm font-medium text-blue-600 hover:underline dark:text-blue-500"
+                >
+                    Undo
+                </button>
+            {/if}
         </Toast>
     </div>
 {/if}

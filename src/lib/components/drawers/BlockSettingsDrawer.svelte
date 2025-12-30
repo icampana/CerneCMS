@@ -128,7 +128,15 @@
             }
         });
     }
+
+    function handleKeydown(e) {
+        if (e.key === 'Escape' && drawerOpen) {
+            closeDrawer();
+        }
+    }
 </script>
+
+<svelte:window onkeydown={handleKeydown} />
 
 <Drawer
     placement="right"

@@ -1,25 +1,25 @@
 <script>
-    import { onMount, onDestroy } from 'svelte';
+    import { onMount, onDestroy, tick } from 'svelte';
     import { Breadcrumb, BreadcrumbItem } from 'flowbite-svelte';
-    import { CogOutline } from 'flowbite-svelte-icons';
+    import { CogOutline, WindowSolid, WindowRestoreSolid } from 'flowbite-svelte-icons';
     import { editorStore } from '../stores/editor.svelte.js';
     import { push } from 'svelte-spa-router'; // Import push
     import BubbleMenu from './menus/BubbleMenu.svelte';
     import BlockOptionsMenu from './menus/BlockOptionsMenu.svelte';
     import ComponentToolbar from './ComponentToolbar.svelte';
+
     import PageSettingsDrawer from './PageSettingsDrawer.svelte';
+    import EditorSkeleton from './ui/EditorSkeleton.svelte';
 
     // Get params from router
     let { params = {} } = $props();
     let pageId = $derived(params.pageId);
 
-    let element;
+    let element = $state();
     let bubbleMenuEl = $state(null);
+    let loading = $state(true);
 
     onMount(async () => {
-        // Init Editor
-        editorStore.init(element, bubbleMenuEl);
-
         // Load Data if pageId is present
         if (pageId && pageId !== 'new') {
             try {
@@ -35,6 +35,15 @@
             // Reset for new page
             editorStore.reset();
         }
+
+        // Hide loader and render editor DOM
+        loading = false;
+        await tick();
+
+        // Init Editor now that DOM is ready
+        if (element) {
+            editorStore.init(element, bubbleMenuEl);
+        }
     });
 
     onDestroy(() => {
@@ -42,8 +51,11 @@
     });
 </script>
 
-<div class="editor-wrapper border border-gray-200 rounded-lg bg-white shadow-sm relative group">
-    <!-- Menus -->
+<div class="editor-wrapper border border-gray-200 rounded-lg bg-white shadow-sm relative group transition-all duration-300 {editorStore.zenModeEnabled ? '!border-0 !rounded-none !shadow-none min-h-screen' : ''}">
+    {#if loading}
+        <EditorSkeleton />
+    {:else}
+        <!-- Menus -->
     <!-- We pass bind:this to get the component instance, but we actually need the DOM element inside. -->
     <!-- Simpler: define the divs here and pass them to the store, and just use the logic in the components? -->
     <!-- Or better: Pass the DOM element BINDING down? -->
@@ -65,22 +77,39 @@
                 <BreadcrumbItem href="#/pages" home>Pages</BreadcrumbItem>
                 <BreadcrumbItem>{editorStore.title || 'New Page'}</BreadcrumbItem>
             </Breadcrumb>
-            <button
-                onclick={() => editorStore.openSettingsDrawer()}
-                class="p-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition-colors"
-                title="Page Settings"
-            >
-                <CogOutline class="w-5 h-5" />
-            </button>
+
+
+            <div class="flex items-center gap-1">
+                <button
+                    onclick={() => editorStore.openSettingsDrawer()}
+                    class="p-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition-colors"
+                    title="Page Settings"
+                >
+                    <CogOutline class="w-5 h-5" />
+                </button>
+                <button
+                    onclick={() => editorStore.toggleZenMode()}
+                    class="p-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition-colors"
+                    title={editorStore.zenModeEnabled ? "Exit Zen Mode" : "Enter Zen Mode"}
+                >
+                    {#if editorStore.zenModeEnabled}
+                        <WindowRestoreSolid class="w-5 h-5" />
+                    {:else}
+                        <WindowSolid class="w-5 h-5" />
+                    {/if}
+                </button>
+            </div>
         </div>
 
-        <!-- Title Input -->
-        <input
-            type="text"
-            bind:value={editorStore.title}
-            placeholder="Page Title"
-            class="w-full text-3xl font-bold text-gray-800 border-none focus:ring-0 placeholder-gray-300 bg-transparent px-0"
-        />
+        {#if !editorStore.zenModeEnabled}
+             <!-- Title Input -->
+            <input
+                type="text"
+                bind:value={editorStore.title}
+                placeholder="Page Title"
+                class="w-full text-3xl font-bold text-gray-800 border-none focus:ring-0 placeholder-gray-300 bg-transparent px-0"
+            />
+        {/if}
     </div>
 
     <!-- Component Toolbar (Sticky below header) -->
@@ -97,6 +126,7 @@
         {editorStore.content}
     </div>
     -->
+    {/if}
 </div>
 
 <style>

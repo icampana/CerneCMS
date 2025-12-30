@@ -1,5 +1,5 @@
 <script>
-    import { createEventDispatcher } from 'svelte';
+
     import DatePicker from '../../ui/DatePicker.svelte';
 
     export let event = {
@@ -13,20 +13,21 @@
         color: '#3788d8'
     };
     export let isOpen = false;
-
-    const dispatch = createEventDispatcher();
+    export let onclose = () => {};
+    export let onsave = () => {};
+    export let ondelete = () => {};
 
     function close() {
-        dispatch('close');
+        onclose();
     }
 
     function save() {
-        dispatch('save', event);
+        onsave(event);
     }
 
     function remove() {
         if(confirm('Are you sure you want to delete this event?')) {
-             dispatch('delete', event);
+             ondelete(event);
         }
     }
 </script>
@@ -36,7 +37,7 @@
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md p-6 max-h-screen overflow-y-auto">
             <h2 class="text-xl font-bold mb-4 dark:text-white">{event.id ? 'Edit Event' : 'Add Event'}</h2>
 
-            <form on:submit|preventDefault={save}>
+            <form onsubmit={(e) => { e.preventDefault(); save(); }}>
                 <div class="mb-4">
                     <label for="title" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Title</label>
                     <input type="text" id="title" bind:value={event.title} required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" />
@@ -62,9 +63,9 @@
 
                 <div class="flex justify-end gap-2 mt-6">
                     {#if event.id}
-                        <button type="button" on:click={remove} class="text-red-600 hover:text-red-800 font-medium text-sm px-5 py-2.5">Delete</button>
+                        <button type="button" onclick={remove} class="text-red-600 hover:text-red-800 font-medium text-sm px-5 py-2.5">Delete</button>
                     {/if}
-                    <button type="button" on:click={close} class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">Cancel</button>
+                    <button type="button" onclick={close} class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">Cancel</button>
                     <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Save</button>
                 </div>
             </form>
