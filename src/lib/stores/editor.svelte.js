@@ -57,6 +57,8 @@ import DragHandle from '@tiptap/extension-drag-handle';
 
         // Settings Drawer State
         settingsDrawerOpen = $state(false);
+        // Navigation Drawer State
+        navDrawerOpen = $state(false);
 
         // SEO Fields
         metaTitle = $state('');
@@ -428,6 +430,15 @@ import DragHandle from '@tiptap/extension-drag-handle';
 
         closeSettingsDrawer() {
             this.settingsDrawerOpen = false;
+        }
+
+        // Navigation Drawer Methods
+        toggleNavDrawer() {
+            this.navDrawerOpen = !this.navDrawerOpen;
+        }
+
+        closeNavDrawer() {
+            this.navDrawerOpen = false;
         }
 
         // Block Settings Methods

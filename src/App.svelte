@@ -1,6 +1,12 @@
 <script>
     import Router from 'svelte-spa-router';
-    import Navbar from './lib/components/Navbar.svelte';
+    // Layout
+    // import Navbar from './lib/components/Navbar.svelte'; // Deprecated
+    import NavigationDrawer from './lib/components/NavigationDrawer.svelte';
+    import StickyActionBar from './lib/components/StickyActionBar.svelte';
+    import { Button } from 'flowbite-svelte';
+    import { BarsFromLeftOutline } from 'flowbite-svelte-icons';
+
     import MediaManager from './lib/components/MediaManager.svelte';
     import VideoModal from './lib/components/modals/VideoModal.svelte';
     import { Toast } from 'flowbite-svelte';
@@ -23,13 +29,27 @@
     };
 </script>
 
-<div class="min-h-screen bg-gray-50 flex flex-col">
-    <Navbar />
+<div class="min-h-screen bg-gray-50 flex flex-col relative">
 
-    <div class="cms-shell flex-1 p-8 max-w-7xl mx-auto w-full">
+    <!-- Navigation Drawer -->
+    <NavigationDrawer />
+
+    <!-- Hamburger Trigger (Fixed top-left) -->
+    <div class="fixed top-4 left-4 z-30 print:hidden">
+        <Button color="light" class="!p-2 shadow-sm bg-white/80 backdrop-blur" onclick={(e) => { e.stopPropagation(); editorStore.toggleNavDrawer(); }}>
+            <BarsFromLeftOutline class="w-6 h-6 text-gray-600" />
+        </Button>
+    </div>
+
+    <!-- Main Content Area -->
+    <!-- Added pt-14 to account for trigger button space if needed, or just let it float over -->
+    <div class="cms-shell flex-1 p-8 pt-16 max-w-7xl mx-auto w-full transition-all duration-300">
         <!-- Router View -->
         <Router {routes} />
     </div>
+
+    <!-- Sticky Action Bar (Only shows in editor) -->
+    <StickyActionBar />
 </div>
 
 <!-- Global Media Library Modal -->
