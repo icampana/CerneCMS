@@ -10,14 +10,38 @@ This guide covers the end-to-end process of creating a new block (widget) in Cer
 
 ### 1. Backend: Block Rendering (PHP)
 **File:** `app/services/BlockRenderer.php`
+**Directory:** `app/services/blocks/`
 
-Define how the block's JSON data matches to HTML for the public frontend. Add a new `case` to the `renderNode` switch statement.
+Define how the block's JSON data matches to HTML for the public frontend.
 
-```php
-case 'my-block':
-    $title = htmlspecialchars($node['attrs']['title'] ?? '');
-    return "<div class=\"my-block\"><h3>{$title}</h3></div>";
-```
+1.  **Create a Renderer Class**: Create a new class in `app/services/blocks/` that implements `BlockRendererInterface`.
+
+    ```php
+    // app/services/blocks/MyBlockRenderer.php
+    namespace app\services\blocks;
+
+    use app\services\BlockRenderer;
+
+    class MyBlockRenderer implements BlockRendererInterface
+    {
+        public function render(array $node, BlockRenderer $renderer): string
+        {
+            $title = htmlspecialchars($node['attrs']['title'] ?? '');
+            return "<div class=\"my-block\"><h3>{$title}</h3></div>";
+        }
+    }
+    ```
+
+2.  **Register the Renderer**: Add the new renderer to the `registerDefaultRenderers` method in `app/services/BlockRenderer.php`.
+
+    ```php
+    // app/services/BlockRenderer.php
+    private function registerDefaultRenderers(): void
+    {
+        // ...
+        $this->registerRenderer('my-block', new MyBlockRenderer());
+    }
+    ```
 
 ### 2. Frontend: Tiptap Extension (JS)
 **Location:** `src/lib/editor/extensions/` or inline in `src/lib/stores/editor.svelte.js`
