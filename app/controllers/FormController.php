@@ -142,7 +142,7 @@ class FormController
         }
 
         $stmt = $db->prepare("DELETE FROM {$tableName} WHERE id = :rid");
-        $stmt->bindValue(':rid', $rid, SQLITE3_INTEGER);
+        $stmt->bindValue(':rid', $rid, \PDO::PARAM_INT);
         $stmt->execute();
 
         Flight::json(['status' => 'success']);

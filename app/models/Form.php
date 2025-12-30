@@ -96,12 +96,12 @@ class Form extends ActiveRecord
             return [];
 
         $stmt = $db->prepare("SELECT * FROM {$tableName} ORDER BY submitted_at DESC LIMIT :limit OFFSET :offset");
-        $stmt->bindValue(':limit', $limit, SQLITE3_INTEGER);
-        $stmt->bindValue(':offset', $offset, SQLITE3_INTEGER);
-        $res = $stmt->execute();
+        $stmt->bindValue(':limit', $limit, \PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, \PDO::PARAM_INT);
+        $stmt->execute();
 
         $responses = [];
-        while ($row = $res->fetchArray(SQLITE3_ASSOC)) {
+        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
             $row['data'] = json_decode($row['data_json'], true);
             $responses[] = $row;
         }
@@ -125,7 +125,8 @@ class Form extends ActiveRecord
         if (!$stmt->fetch())
             return 0;
 
-        return $db->querySingle("SELECT COUNT(*) FROM {$tableName}");
+        $stmt = $db->query("SELECT COUNT(*) FROM {$tableName}");
+        return $stmt->fetchColumn();
     }
 
     /**
@@ -140,7 +141,7 @@ class Form extends ActiveRecord
         // If not, we do:
         $db = Flight::db();
         $stmt = $db->prepare("DELETE FROM forms WHERE id = :id");
-        $stmt->bindValue(':id', $this->id, SQLITE3_INTEGER);
+        $stmt->bindValue(':id', $this->id, \PDO::PARAM_INT);
         $stmt->execute();
     }
 }

@@ -17,8 +17,8 @@ class FormSubmissionController
         $db = Flight::db();
         $stmt = $db->prepare("SELECT * FROM forms WHERE slug = :slug AND status = 'active'");
         $stmt->bindValue(':slug', $slug);
-        $res = $stmt->execute();
-        $formData = $res->fetchArray(SQLITE3_ASSOC);
+        $stmt->execute();
+        $formData = $stmt->fetch(\PDO::FETCH_ASSOC);
 
         if (!$formData) {
             Flight::halt(404, json_encode(['error' => 'Form not found or inactive']));
@@ -90,9 +90,9 @@ class FormSubmissionController
         $userAgent = Flight::request()->user_agent;
 
         $insertStmt = $db->prepare("INSERT INTO {$tableName} (data_json, ip_address, user_agent) VALUES (:json, :ip, :ua)");
-        $insertStmt->bindValue(':json', $json, SQLITE3_TEXT);
-        $insertStmt->bindValue(':ip', $ip, SQLITE3_TEXT);
-        $insertStmt->bindValue(':ua', $userAgent, SQLITE3_TEXT);
+        $insertStmt->bindValue(':json', $json, \PDO::PARAM_STR);
+        $insertStmt->bindValue(':ip', $ip, \PDO::PARAM_STR);
+        $insertStmt->bindValue(':ua', $userAgent, \PDO::PARAM_STR);
 
         if ($insertStmt->execute()) {
             Flight::json(['success' => true, 'message' => 'Form submitted successfully']);
