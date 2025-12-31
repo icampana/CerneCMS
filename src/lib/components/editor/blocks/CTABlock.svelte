@@ -69,6 +69,7 @@
         <div class="relative z-10 p-8 md:p-12 flex flex-col gap-6 {layout === 'centered' ? 'items-center text-center' : ''} {layout === 'split' ? 'md:flex-row md:items-center md:justify-between' : ''} {layout === 'hero' ? 'items-center text-center py-20 min-h-[400px]' : ''} {actualTextColor()}">
 
             <div class="flex flex-col gap-4 max-w-2xl">
+                <!-- svelte-ignore a11y_missing_content -->
                 <h2
                     contenteditable
                     use:initContent={node.attrs.title}
@@ -84,9 +85,10 @@
                 ></p>
             </div>
 
-            <div class="flex-shrink-0">
+            <div class="shrink-0">
                 <a
                     href={buttonUrl}
+                    aria-label="CTA Action"
                     onclick={(e) => e.preventDefault()}
                     class="inline-block px-6 py-3 rounded-lg font-semibold transition-transform hover:scale-105 active:scale-95
                            {layout === 'hero' || backgroundImage ? 'bg-white text-gray-900 hover:bg-gray-100' : 'bg-blue-600 text-white hover:bg-blue-700'}"
