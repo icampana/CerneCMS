@@ -23,6 +23,7 @@ Flight::group('/api', function () {
     Flight::route('GET /pages', [ApiController::class, 'getPages']);
     Flight::route('GET /pages/@id', [ApiController::class, 'getPage']);
     Flight::route('POST /pages', [ApiController::class, 'savePage']);
+    Flight::route('DELETE /pages/@id', [ApiController::class, 'deletePage']);
 
     // Media Routes
     Flight::route('GET /media', [ApiController::class, 'getMedia']);

@@ -121,6 +121,32 @@ class ApiController
         ]);
     }
 
+    public function deletePage($id)
+    {
+        $pageModel = new Page();
+        $page = $pageModel->find($id);
+
+        if (!$page) {
+            Flight::halt(404, json_encode(['error' => 'Page not found']));
+            return;
+        }
+
+        // Delete associated blocks
+        $blockModel = new Block();
+        $blocks = $blockModel->eq('page_id', $id)->findAll();
+        foreach ($blocks as $block) {
+            $block->delete();
+        }
+
+        // Delete the page
+        $page->delete();
+
+        Flight::json([
+            'status' => 'success',
+            'message' => 'Page deleted successfully'
+        ]);
+    }
+
     // Search pages
     public function searchPages()
     {
