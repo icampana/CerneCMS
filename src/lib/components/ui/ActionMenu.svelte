@@ -1,6 +1,6 @@
 <script>
     import { Dropdown, DropdownItem, Button } from 'flowbite-svelte';
-    import { PenOutline, TrashBinOutline, EyeOutline } from 'flowbite-svelte-icons';
+    import { PenOutline, TrashBinOutline, EyeOutline, AdjustmentsVerticalSolid, FolderDuplicateSolid } from 'flowbite-svelte-icons';
 
     let { page, onEdit, onDelete, onDuplicate, onPreview } = $props();
 
@@ -31,10 +31,10 @@
     }
 </script>
 
-<Dropdown placement="bottom-end" dismissable={true} bind:open={isOpen}>
-    <Button slot="trigger" color="light" class="!p-2 hover:bg-gray-100 dark:hover:bg-gray-700">
-        <EllipsisVerticalOutline class="w-5 h-5 text-gray-500" />
-    </Button>
+<Button color="light" class="p-2! hover:bg-gray-100 dark:hover:bg-gray-700">
+  <AdjustmentsVerticalSolid class="w-5 h-5 text-gray-500" />
+</Button>
+<Dropdown dismissable={true} bind:open={isOpen}>
     <ul class="py-1 text-sm text-gray-700 dark:text-gray-200">
         <DropdownItem onclick={handleEdit}>
             <div class="flex items-center gap-2">
@@ -44,7 +44,7 @@
         </DropdownItem>
         <DropdownItem onclick={handleDuplicate}>
             <div class="flex items-center gap-2">
-                <DuplicateOutline class="w-4 h-4" />
+                <FolderDuplicateSolid class="w-4 h-4" />
                 <span>Duplicate</span>
             </div>
         </DropdownItem>

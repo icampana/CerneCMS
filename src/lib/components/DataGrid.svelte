@@ -12,7 +12,6 @@
         onDelete,
         onDuplicate,
         onPreview,
-        viewMode = 'table',
         selectedIds = [],
         onToggleSelect,
         onToggleSelectAll
@@ -112,6 +111,13 @@
                                     <StatusBadge status={item[col.field] || 'draft'} size="sm" />
                                 {:else if col.field === 'updated_at'}
                                     <span class="text-gray-500 dark:text-gray-400">{formatDate(item[col.field])}</span>
+                                {:else if col.field === 'title' && onEdit}
+                                    <button
+                                        onclick={() => onEdit(item)}
+                                        class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:underline font-medium cursor-pointer"
+                                    >
+                                        {item[col.field] || '-'}
+                                    </button>
                                 {:else}
                                     <span class="text-gray-900 dark:text-white">{item[col.field] || '-'}</span>
                                 {/if}

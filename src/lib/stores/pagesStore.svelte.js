@@ -6,7 +6,7 @@ export class PagesStore {
     pages = $state([]);
     loading = $state(false);
     error = $state(null);
-    viewMode = $state('grid'); // 'grid' | 'table'
+    viewMode = $state('table'); // 'grid' | 'table'
     searchQuery = $state('');
     statusFilter = $state('all');
     selectedIds = $state([]);
