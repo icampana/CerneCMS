@@ -1,5 +1,7 @@
 # CerneCMS
 
+![CerneCMS Logo](./public/images/cerne-logo.svg)
+
 **CerneCMS** is a lightweight, modern, block-based Content Management System (CMS) designed for small websites. Perfect for landing pages, product pages, portfolios, and other simple web projects that need an intuitive content management experience.
 
 ## 🎯 For End Users
