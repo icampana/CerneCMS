@@ -11,6 +11,16 @@ export class PagesStore {
     statusFilter = $state('all');
     selectedIds = $state([]);
     pendingDeletes = $state([]);
+    deleteLoading = $state(false);
+
+    // Confirmation Modal State
+    confirmModalOpen = $state(false);
+    confirmModalConfig = $state({
+        title: 'Confirm Action',
+        message: 'Are you sure you want to proceed?',
+        onConfirm: null,
+        type: 'danger'
+    });
 
     // Load pages from API
     async loadPages() {
@@ -126,54 +136,66 @@ export class PagesStore {
         return this.selectedIds.length > 0 && !this.allSelected;
     }
 
+    // Show confirmation modal
+    showConfirmModal(title, message, onConfirm, type = 'danger') {
+        this.confirmModalConfig = {
+            title,
+            message,
+            onConfirm,
+            type
+        };
+        this.confirmModalOpen = true;
+    }
+
+    // Handle modal confirm
+    handleModalConfirm() {
+        if (this.confirmModalConfig.onConfirm) {
+            this.confirmModalConfig.onConfirm();
+        }
+        this.confirmModalOpen = false;
+    }
+
+    // Handle modal cancel
+    handleModalCancel() {
+        this.confirmModalOpen = false;
+    }
+
     // Soft delete a single page
     async deletePage(page) {
-        // Optimistic UI - remove from list immediately
-        const pageData = { ...page };
-        this.pages = this.pages.filter(p => p.id !== page.id);
-        this.selectedIds = this.selectedIds.filter(id => id !== page.id);
+        // Show confirmation modal instead of native confirm
+        this.showConfirmModal(
+            'Delete Page',
+            `Are you sure you want to delete "${page.title}"? This action cannot be undone.`,
+            async () => {
+                // Set loading state
+                this.deleteLoading = true;
 
-        // Store for potential undo
-        const deleteEntry = {
-            page: pageData,
-            timer: setTimeout(() => this.confirmDelete(page.id), 5000)
-        };
-        this.pendingDeletes.push(deleteEntry);
+                try {
+                    const res = await fetch(`/api/pages/${page.id}`, {
+                        method: 'DELETE'
+                    });
 
-        // Show undo toast
-        editorStore.showUndoToast('Page deleted', () => this.undoDelete(page.id));
-        return true;
-    }
+                    if (!res.ok) {
+                        throw new Error('Failed to delete page');
+                    }
 
-    // Confirm physical delete after timeout
-    async confirmDelete(pageId) {
-        // Remove from pending list
-        this.pendingDeletes = this.pendingDeletes.filter(d => d.page.id !== pageId);
+                    const result = await res.json();
+                    console.log('Page deleted:', result);
 
-        try {
-            const res = await fetch(`/api/pages/${pageId}`, {
-                method: 'DELETE'
-            });
-            if (!res.ok) throw new Error('Failed to delete page');
-            console.log('Page permanently deleted:', pageId);
-        } catch (e) {
-            console.error('Error confirming delete:', e);
-            // If failed, maybe restore it? Or just log.
-            // For now, we assume it's gone from UI.
-        }
-    }
+                    // Reload pages from API to get fresh data
+                    await this.loadPages();
 
-    // Undo delete
-    undoDelete(pageId) {
-        const entry = this.pendingDeletes.find(d => d.page.id === pageId);
-        if (entry) {
-            clearTimeout(entry.timer);
-            // Restore to list (prepend or append? let's prepend to see it)
-            this.pages = [entry.page, ...this.pages];
-            // Remove from pending
-            this.pendingDeletes = this.pendingDeletes.filter(d => d.page.id !== pageId);
-            editorStore.showToast('Page restored', 'success');
-        }
+                    // Close modal and show success message
+                    this.confirmModalOpen = false;
+                    editorStore.showToast('Page deleted successfully', 'success');
+                } catch (e) {
+                    console.error('Error deleting page:', e);
+                    editorStore.showToast('Failed to delete page', 'error');
+                } finally {
+                    this.deleteLoading = false;
+                }
+            }
+        );
     }
 
     // Delete multiple pages

@@ -18,9 +18,7 @@
 
     function handleDelete() {
         isOpen = false;
-        if (confirm(`Are you sure you want to delete "${page.title}"?`)) {
-            onDelete(page);
-        }
+        onDelete(page);
     }
 
     function handlePreview() {

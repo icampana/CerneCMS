@@ -9,6 +9,7 @@
     import ViewToggle from '../ui/ViewToggle.svelte';
     import SearchBar from '../ui/SearchBar.svelte';
     import FilterDropdown from '../ui/FilterDropdown.svelte';
+    import ConfirmationModal from '../ui/ConfirmationModal.svelte';
 
     import { pagesStore } from '../../stores/pagesStore.svelte.js';
 
@@ -199,7 +200,7 @@
             <!-- Table View -->
             {:else}
                 <DataGrid
-                    endpoint="/api/pages"
+                    items={pagesStore.filteredPages}
                     columns={pageColumns}
                     onEdit={handleEdit}
                     onDelete={handleDelete}
@@ -214,6 +215,19 @@
         {/if}
     </div>
 </div>
+
+<!-- Confirmation Modal -->
+<ConfirmationModal
+    bind:open={pagesStore.confirmModalOpen}
+    title={pagesStore.confirmModalConfig.title}
+    message={pagesStore.confirmModalConfig.message}
+    type={pagesStore.confirmModalConfig.type}
+    loading={pagesStore.deleteLoading}
+    onConfirm={() => pagesStore.handleModalConfirm()}
+    onCancel={() => pagesStore.handleModalCancel()}
+    confirmText="Delete"
+    cancelText="Cancel"
+/>
 
 <style>
     @keyframes fade-in {

@@ -6,7 +6,8 @@
 
     // Props
     let {
-        endpoint,
+        endpoint = null,
+        items = [],
         columns = [],
         onEdit,
         onDelete,
@@ -18,11 +19,11 @@
     } = $props();
 
     // State
-    let items = $state([]);
-    let loading = $state(true);
+    let loading = $state(false);
     let error = $state(null);
 
     async function loadData() {
+        if (!endpoint) return;
         loading = true;
         try {
             const res = await fetch(endpoint);
@@ -38,7 +39,9 @@
     }
 
     onMount(() => {
-        loadData();
+        if (endpoint) {
+            loadData();
+        }
     });
 
     function formatDate(dateString) {
