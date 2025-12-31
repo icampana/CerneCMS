@@ -35,6 +35,8 @@
 
 ![Editor Screenshot](./docs/img/sample-editor.png)
 
+![Pages List](./docs/img/sample-page-list.png)
+
 ## 🚀 Key Features
 
 ### Data & Content
