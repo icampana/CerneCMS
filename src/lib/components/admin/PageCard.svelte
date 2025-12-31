@@ -25,7 +25,7 @@
 </script>
 
 <Card
-    padding="md"
+    size="md"
     class="relative group cursor-pointer hover:shadow-lg transition-all duration-200 border border-gray-200 dark:border-gray-700 hover:border-blue-400 dark:hover:border-blue-500"
     onclick={handleCardClick}
 >
@@ -51,20 +51,21 @@
     </div>
 
     <!-- Content -->
-    <div class="text-center">
-        <h3 class="text-lg font-bold text-gray-900 dark:text-white truncate mb-1" title={page.title}>
+    <div class="px-5 pb-5">
+        <h5 class=" text-gray-900 dark:text-white truncate mb-1" title={page.title}>
             {page.title || 'Untitled Page'}
-        </h3>
+        </h5>
         <p class="text-sm text-gray-500 dark:text-gray-400 font-mono mb-4 truncate">
             /{page.slug || 'untitled'}
         </p>
 
         <!-- Footer Info -->
-        <div class="flex items-center justify-center gap-2 pt-4 pb-4 border-t border-gray-100 dark:border-gray-700">
-            <StatusBadge status={page.status || 'draft'} size="xs" />
-            <span class="text-xs text-gray-400">
+
+        <div class="flex items-center justify-between">
+          <StatusBadge status={page.status || 'draft'} size="xs" />
+          <span class="text-xs text-gray-400">
                 {formatDate(page.updated_at)}
-            </span>
+          </span>
         </div>
     </div>
 </Card>

@@ -1,6 +1,6 @@
 <script>
     import { Dropdown, DropdownItem, Button, Badge } from 'flowbite-svelte';
-    import { FilterSolid } from 'flowbite-svelte-icons';
+    import { ChevronDownOutline, FilterSolid } from 'flowbite-svelte-icons';
 
     let { value = 'all', onChange, counts = {} } = $props();
 
@@ -19,7 +19,8 @@
     }
 </script>
 
-<Dropdown placement="bottom-end" dismissable={true}>
+<Button>Filter By<ChevronDownOutline class="ms-2 h-6 w-6 text-white dark:text-white" /></Button>
+<Dropdown dismissable={true}>
     <Button slot="trigger" color="light" class="flex items-center gap-2">
         <FilterSolid class="w-4 h-4" />
         <span class="hidden sm:inline">
@@ -29,7 +30,7 @@
             <Badge color="gray" size="sm">{getCount(value)}</Badge>
         {/if}
     </Button>
-    <ul class="py-1 text-sm text-gray-700 dark:text-gray-200 min-w-[160px]">
+    <ul class="py-1 text-sm text-gray-700 dark:text-gray-200 min-w-40">
         {#each filterOptions as option}
             <DropdownItem
                 onclick={() => handleSelect(option.id)}

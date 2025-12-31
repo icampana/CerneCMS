@@ -1,9 +1,9 @@
 <script>
     import { onMount } from 'svelte';
     import { push } from 'svelte-spa-router';
-    import { Button } from 'flowbite-svelte';
-    import { PlusOutline, TrashBinOutline, FileOutline } from 'flowbite-svelte-icons';
-    import Editor from '../Editor.svelte';
+    import { Button, ButtonGroup } from 'flowbite-svelte';
+    import { PlusOutline, TrashBinOutline } from 'flowbite-svelte-icons';
+
     import CardView from './CardView.svelte';
     import DataGrid from '../DataGrid.svelte';
     import ViewToggle from '../ui/ViewToggle.svelte';
@@ -89,17 +89,6 @@
                 </p>
             </div>
 
-            <!-- Actions -->
-            <div class="flex items-center gap-3">
-                <Button size="sm" onclick={handleCreate}>
-                    <PlusOutline class="w-4 h-4 mr-2" />
-                    New Page
-                </Button>
-            </div>
-        </div>
-
-        <!-- Toolbar -->
-        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 mt-4">
             <!-- Search -->
             <SearchBar
                 value={pagesStore.searchQuery}
@@ -114,20 +103,18 @@
                 counts={pagesStore.statusCounts}
             />
 
-            <!-- Spacer -->
-            <div class="flex-1"></div>
-
-            <!-- Bulk Actions (shown when items selected) -->
+                        <!-- Bulk Actions (shown when items selected) -->
             {#if pagesStore.selectedIds.length > 0}
                 <div class="flex items-center gap-2 animate-fade-in">
                     <span class="text-sm text-gray-500 dark:text-gray-400">
                         {pagesStore.selectedIds.length} selected
                     </span>
+
                     <Button
                         size="sm"
                         color="red"
                         onclick={handleBulkDelete}
-                        class="!px-3"
+                        class="px-3!"
                     >
                         <TrashBinOutline class="w-4 h-4" />
                     </Button>
@@ -135,7 +122,7 @@
                         size="sm"
                         color="light"
                         onclick={() => pagesStore.clearSelection()}
-                        class="!px-3"
+                        class="px-3!"
                     >
                         Clear
                     </Button>
@@ -147,6 +134,20 @@
                     onViewChange={handleViewChange}
                 />
             {/if}
+
+            <!-- Actions -->
+            <div class="flex items-center gap-3">
+                <Button size="sm" onclick={handleCreate}>
+                    <PlusOutline class="w-4 h-4 mr-2" />
+                    New Page
+                </Button>
+            </div>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 mt-4">
+
+
 
         </div>
     </div>

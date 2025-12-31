@@ -4,14 +4,12 @@
 
     let { value = '', onSearch, placeholder = 'Search pages...' } = $props();
 
-    let localValue = $state(value);
+    let localValue = $state('');
     let debounceTimer = null;
 
     // Sync with prop value when it changes
     $effect(() => {
-        if (value !== localValue) {
-            localValue = value;
-        }
+        localValue = value;
     });
 
     function handleInput(e) {
