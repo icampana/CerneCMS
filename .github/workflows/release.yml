@@ -72,7 +72,6 @@ jobs:
         cp -r bin release/
         cp -r content release/
         cp -r docs release/
-        cp -r plans release/
         cp -r public release/
         cp -r src release/
         cp -r vendor release/
