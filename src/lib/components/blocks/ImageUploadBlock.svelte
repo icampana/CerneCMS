@@ -1,7 +1,8 @@
 <script>
     import { NodeViewWrapper } from 'svelte-tiptap';
     import { editorStore } from '../../stores/editor.svelte.js';
-    import { ImageOutline, UploadOutline } from 'flowbite-svelte-icons';
+    import ImageOutline from 'flowbite-svelte-icons/ImageOutline.svelte';
+    import UploadOutline from 'flowbite-svelte-icons/UploadOutline.svelte';
     import { resizeImage } from '../../utils/image.js';
 
     // Props from svelte-tiptap

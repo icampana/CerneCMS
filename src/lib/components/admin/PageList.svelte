@@ -2,7 +2,8 @@
     import { onMount } from 'svelte';
     import { push } from 'svelte-spa-router';
     import { Button, ButtonGroup } from 'flowbite-svelte';
-    import { PlusOutline, TrashBinOutline } from 'flowbite-svelte-icons';
+    import PlusOutline from 'flowbite-svelte-icons/PlusOutline.svelte';
+    import TrashBinOutline from 'flowbite-svelte-icons/TrashBinOutline.svelte';
 
     import CardView from './CardView.svelte';
     import DataGrid from '../DataGrid.svelte';

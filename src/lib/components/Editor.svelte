@@ -1,7 +1,9 @@
 <script>
     import { onMount, onDestroy, tick } from 'svelte';
     import { Breadcrumb, BreadcrumbItem } from 'flowbite-svelte';
-    import { CogOutline, WindowSolid, WindowRestoreSolid } from 'flowbite-svelte-icons';
+    import CogOutline from 'flowbite-svelte-icons/CogOutline.svelte';
+    import WindowSolid from 'flowbite-svelte-icons/WindowSolid.svelte';
+    import WindowRestoreSolid from 'flowbite-svelte-icons/WindowRestoreSolid.svelte';
     import { editorStore } from '../stores/editor.svelte.js';
     import { push } from 'svelte-spa-router'; // Import push
     import BubbleMenu from './menus/BubbleMenu.svelte';

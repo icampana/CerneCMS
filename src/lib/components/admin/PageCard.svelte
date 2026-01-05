@@ -1,6 +1,6 @@
 <script>
     import { Card, Checkbox } from 'flowbite-svelte';
-    import { FileOutline } from 'flowbite-svelte-icons';
+    import FileOutline from 'flowbite-svelte-icons/FileOutline.svelte';
     import StatusBadge from '../ui/StatusBadge.svelte';
     import ActionMenu from '../ui/ActionMenu.svelte';
 

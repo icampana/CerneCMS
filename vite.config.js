@@ -13,8 +13,23 @@ export default defineConfig({
     outDir: 'public/assets',
     // Clear the output directory before building
     emptyOutDir: true,
+    sourcemap: false,
     rollupOptions: {
-      input: 'src/main.js'
+      input: 'src/main.js',
+      output: {
+        manualChunks: (id) => {
+          if (id.includes('node_modules')) {
+             if (id.includes('@tiptap') || id.includes('prosemirror') || id.includes('svelte-tiptap')) {
+                  return 'tiptap';
+              }
+              if (id.includes('flowbite')) {
+                  return 'flowbite';
+              }
+
+              return 'vendor'; // all other package goes here
+          }
+        }
+      }
     }
   },
   server: {

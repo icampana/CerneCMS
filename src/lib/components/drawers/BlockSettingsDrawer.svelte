@@ -2,7 +2,10 @@
     import { Drawer, Label, Input, Checkbox, CloseButton, Select, Range, Button } from 'flowbite-svelte';
     import { sineIn } from 'svelte/easing';
     import { editorStore } from '../../stores/editor.svelte.js';
-    import { EditOutline, PlusOutline, CogSolid } from 'flowbite-svelte-icons';
+    import EditOutline from 'flowbite-svelte-icons/EditOutline.svelte';
+    import PlusOutline from 'flowbite-svelte-icons/PlusOutline.svelte';
+    import CogSolid from 'flowbite-svelte-icons/CogSolid.svelte';
+    import TrashBinSolid from 'flowbite-svelte-icons/TrashBinSolid.svelte';
     import FormManager from '../editor/modals/FormManager.svelte';
 
     let showFormManager = $state(false);
@@ -45,7 +48,7 @@
             update('formSlug', selected.slug);
         }
     }
-    import { TrashBinSolid } from 'flowbite-svelte-icons';
+
 
     // Sync open state from store
     let drawerOpen = $state(false);

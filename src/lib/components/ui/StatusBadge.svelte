@@ -1,6 +1,9 @@
 <script>
     import { Badge } from 'flowbite-svelte';
-    import { CheckCircleSolid, ClockSolid, ArchiveSolid, TrashBinSolid } from 'flowbite-svelte-icons';
+    import CheckCircleSolid from 'flowbite-svelte-icons/CheckCircleSolid.svelte';
+    import ClockSolid from 'flowbite-svelte-icons/ClockSolid.svelte';
+    import ArchiveSolid from 'flowbite-svelte-icons/ArchiveSolid.svelte';
+    import TrashBinSolid from 'flowbite-svelte-icons/TrashBinSolid.svelte';
 
     let { status = 'draft', size = 'large' } = $props();
 

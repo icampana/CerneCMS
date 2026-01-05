@@ -1,6 +1,7 @@
 <script>
     import { Input } from 'flowbite-svelte';
-    import { SearchSolid, XSolid } from 'flowbite-svelte-icons';
+    import SearchSolid from 'flowbite-svelte-icons/SearchSolid.svelte';
+    import XSolid from 'flowbite-svelte-icons/XSolid.svelte';
 
     let { value = '', onSearch, placeholder = 'Search pages...' } = $props();
 

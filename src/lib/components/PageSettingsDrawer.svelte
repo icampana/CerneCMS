@@ -1,6 +1,6 @@
 <script>
     import { Drawer, Button, Label, Input, Textarea } from 'flowbite-svelte';
-    import { CogOutline } from 'flowbite-svelte-icons';
+    import CogOutline from 'flowbite-svelte-icons/CogOutline.svelte';
     import { editorStore } from '../stores/editor.svelte.js';
 
     function handleSlugChange(event) {

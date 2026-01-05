@@ -1,6 +1,7 @@
 <script>
     import { Button, ButtonGroup } from 'flowbite-svelte';
-    import { ListOutline, GridSolid } from 'flowbite-svelte-icons';
+    import ListOutline from 'flowbite-svelte-icons/ListOutline.svelte';
+    import GridSolid from 'flowbite-svelte-icons/GridSolid.svelte';
 
     let { viewMode = 'grid', onViewChange } = $props();
 

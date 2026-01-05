@@ -1,7 +1,9 @@
 <script>
     import { NodeViewWrapper } from 'svelte-tiptap';
     import { editorStore } from '../../../stores/editor.svelte.js';
-    import { CogSolid, PlusOutline, TrashBinSolid } from 'flowbite-svelte-icons';
+    import CogSolid from 'flowbite-svelte-icons/CogSolid.svelte';
+    import PlusOutline from 'flowbite-svelte-icons/PlusOutline.svelte';
+    import TrashBinSolid from 'flowbite-svelte-icons/TrashBinSolid.svelte';
     import { onMount, onDestroy } from 'svelte';
     import Swiper from 'swiper';
     import { Navigation, Pagination, Autoplay } from 'swiper/modules';

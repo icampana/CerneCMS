@@ -1,6 +1,10 @@
 <script>
     import { Dropdown, DropdownItem, Button } from 'flowbite-svelte';
-    import { PenOutline, TrashBinOutline, EyeOutline, AdjustmentsVerticalSolid, FolderDuplicateSolid } from 'flowbite-svelte-icons';
+    import PenOutline from 'flowbite-svelte-icons/PenOutline.svelte';
+    import TrashBinOutline from 'flowbite-svelte-icons/TrashBinOutline.svelte';
+    import EyeOutline from 'flowbite-svelte-icons/EyeOutline.svelte';
+    import AdjustmentsVerticalSolid from 'flowbite-svelte-icons/AdjustmentsVerticalSolid.svelte';
+    import FolderDuplicateSolid from 'flowbite-svelte-icons/FolderDuplicateSolid.svelte';
 
     let { page, onEdit, onDelete, onDuplicate, onPreview } = $props();
 

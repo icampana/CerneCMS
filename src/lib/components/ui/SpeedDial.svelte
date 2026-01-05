@@ -1,6 +1,6 @@
 <script>
     import { SpeedDial, SpeedDialButton } from 'flowbite-svelte';
-    import { PlusOutline } from 'flowbite-svelte-icons';
+    import PlusOutline from 'flowbite-svelte-icons/PlusOutline.svelte';
 
     let { actions = [], tooltip = "none" } = $props();
 </script>

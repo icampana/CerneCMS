@@ -1,7 +1,8 @@
 <script>
     import { NodeViewWrapper } from 'svelte-tiptap';
     import { editorStore } from '../../../stores/editor.svelte.js';
-    import { CogSolid, FileLinesSolid } from 'flowbite-svelte-icons';
+    import CogSolid from 'flowbite-svelte-icons/CogSolid.svelte';
+    import FileLinesSolid from 'flowbite-svelte-icons/FileLinesSolid.svelte';
 
     let { node, updateAttributes } = $props();
 

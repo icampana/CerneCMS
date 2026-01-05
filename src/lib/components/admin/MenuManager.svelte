@@ -1,7 +1,14 @@
 <script>
     import { onMount, tick } from 'svelte';
     import { Button, Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell, Modal, Label, Input, Checkbox } from 'flowbite-svelte';
-    import { EditSolid, TrashBinSolid, PlusOutline, AngleRightOutline, AngleLeftOutline, AngleUpOutline, AngleDownOutline, ListMusicSolid } from 'flowbite-svelte-icons';
+    import EditSolid from 'flowbite-svelte-icons/EditSolid.svelte';
+    import TrashBinSolid from 'flowbite-svelte-icons/TrashBinSolid.svelte';
+    import PlusOutline from 'flowbite-svelte-icons/PlusOutline.svelte';
+    import AngleRightOutline from 'flowbite-svelte-icons/AngleRightOutline.svelte';
+    import AngleLeftOutline from 'flowbite-svelte-icons/AngleLeftOutline.svelte';
+    import AngleUpOutline from 'flowbite-svelte-icons/AngleUpOutline.svelte';
+    import AngleDownOutline from 'flowbite-svelte-icons/AngleDownOutline.svelte';
+    import ListMusicSolid from 'flowbite-svelte-icons/ListMusicSolid.svelte';
     import MenuEditor from './MenuEditor.svelte';
 
 

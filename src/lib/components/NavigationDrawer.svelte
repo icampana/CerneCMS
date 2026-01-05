@@ -4,15 +4,13 @@
     import { editorStore } from '../stores/editor.svelte.js';
     import { themeStore } from '../stores/theme.svelte.js';
     import { location } from 'svelte-spa-router';
-    import {
-        GridSolid,
-        FileLinesSolid,
-        ImageSolid,
-        CogSolid,
-        ListMusicSolid,
-        SunSolid,
-        MoonSolid
-    } from 'flowbite-svelte-icons';
+    import GridSolid from 'flowbite-svelte-icons/GridSolid.svelte';
+    import FileLinesSolid from 'flowbite-svelte-icons/FileLinesSolid.svelte';
+    import ImageSolid from 'flowbite-svelte-icons/ImageSolid.svelte';
+    import CogSolid from 'flowbite-svelte-icons/CogSolid.svelte';
+    import ListMusicSolid from 'flowbite-svelte-icons/ListMusicSolid.svelte';
+    import SunSolid from 'flowbite-svelte-icons/SunSolid.svelte';
+    import MoonSolid from 'flowbite-svelte-icons/MoonSolid.svelte';
 
     let transitionParams = {
         x: -320,

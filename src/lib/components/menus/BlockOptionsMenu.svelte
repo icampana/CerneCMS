@@ -1,5 +1,9 @@
 <script>
-    import { FileCloneSolid, TrashBinSolid, CloseCircleSolid, ArrowUpOutline, ArrowDownOutline } from 'flowbite-svelte-icons';
+    import FileCloneSolid from 'flowbite-svelte-icons/FileCloneSolid.svelte';
+    import TrashBinSolid from 'flowbite-svelte-icons/TrashBinSolid.svelte';
+    import CloseCircleSolid from 'flowbite-svelte-icons/CloseCircleSolid.svelte';
+    import ArrowUpOutline from 'flowbite-svelte-icons/ArrowUpOutline.svelte';
+    import ArrowDownOutline from 'flowbite-svelte-icons/ArrowDownOutline.svelte';
     import { editorStore } from '../../stores/editor.svelte.js';
 
     let menuRef = $state(null);

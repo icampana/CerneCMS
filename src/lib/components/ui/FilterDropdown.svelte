@@ -1,6 +1,7 @@
 <script>
     import { Dropdown, DropdownItem, Button, Badge } from 'flowbite-svelte';
-    import { ChevronDownOutline, FilterSolid } from 'flowbite-svelte-icons';
+    import ChevronDownOutline from 'flowbite-svelte-icons/ChevronDownOutline.svelte';
+    import FilterSolid from 'flowbite-svelte-icons/FilterSolid.svelte';
 
     let { value = 'all', onChange, counts = {} } = $props();
 

@@ -1,6 +1,8 @@
 <script>
     import { Modal, Label, Input, Button, Select, Toggle, Helper } from 'flowbite-svelte';
-    import { TrashBinSolid, PlusOutline, ExclamationCircleSolid } from 'flowbite-svelte-icons';
+    import TrashBinSolid from 'flowbite-svelte-icons/TrashBinSolid.svelte';
+    import PlusOutline from 'flowbite-svelte-icons/PlusOutline.svelte';
+    import ExclamationCircleSolid from 'flowbite-svelte-icons/ExclamationCircleSolid.svelte';
     import { editorStore } from '../../../stores/editor.svelte.js';
 
     let { open = $bindable(), onClose, onSave, editFormId = null } = $props();

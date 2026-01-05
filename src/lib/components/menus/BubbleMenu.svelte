@@ -1,7 +1,7 @@
 <script>
     import { BubbleMenu } from '@tiptap/extension-bubble-menu';
     import { onMount } from 'svelte';
-    import { LinkOutline } from 'flowbite-svelte-icons';
+    import LinkOutline from 'flowbite-svelte-icons/LinkOutline.svelte';
     import { editorStore } from '../../stores/editor.svelte.js';
 
     let element;

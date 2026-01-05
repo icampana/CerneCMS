@@ -1,7 +1,12 @@
 <script>
     import { onMount } from 'svelte';
     import { Button, Label, Select, Toggle, Heading, Sidebar, SidebarGroup, SidebarItem, SidebarWrapper } from 'flowbite-svelte';
-    import { CogSolid, GlobeSolid, ImageSolid, DesktopPcSolid, LockSolid, TrashBinSolid } from 'flowbite-svelte-icons';
+    import CogSolid from 'flowbite-svelte-icons/CogSolid.svelte';
+    import GlobeSolid from 'flowbite-svelte-icons/GlobeSolid.svelte';
+    import ImageSolid from 'flowbite-svelte-icons/ImageSolid.svelte';
+    import DesktopPcSolid from 'flowbite-svelte-icons/DesktopPcSolid.svelte';
+    import LockSolid from 'flowbite-svelte-icons/LockSolid.svelte';
+    import TrashBinSolid from 'flowbite-svelte-icons/TrashBinSolid.svelte';
 
     let settings = $state({
         sidebar_enabled: 'internal' // all, internal, none

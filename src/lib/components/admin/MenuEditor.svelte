@@ -1,7 +1,13 @@
 <script>
     import { onMount } from 'svelte';
     import { Button, Spinner } from 'flowbite-svelte';
-    import { EditSolid, TrashBinSolid, PlusOutline, AngleRightOutline, AngleLeftOutline, AngleUpOutline, AngleDownOutline } from 'flowbite-svelte-icons';
+    import EditSolid from 'flowbite-svelte-icons/EditSolid.svelte';
+    import TrashBinSolid from 'flowbite-svelte-icons/TrashBinSolid.svelte';
+    import PlusOutline from 'flowbite-svelte-icons/PlusOutline.svelte';
+    import AngleRightOutline from 'flowbite-svelte-icons/AngleRightOutline.svelte';
+    import AngleLeftOutline from 'flowbite-svelte-icons/AngleLeftOutline.svelte';
+    import AngleUpOutline from 'flowbite-svelte-icons/AngleUpOutline.svelte';
+    import AngleDownOutline from 'flowbite-svelte-icons/AngleDownOutline.svelte';
     import MenuItemModal from './MenuItemModal.svelte';
 
     let { menuId } = $props();

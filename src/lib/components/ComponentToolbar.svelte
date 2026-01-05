@@ -1,17 +1,15 @@
 <script>
-    import {
-        FileLinesOutline,
-        ImageOutline,
-        GridSolid,
-        TextSizeOutline,
-        TableColumnSolid,
-        VideoCameraSolid,
-        MinusOutline,
-        CalendarMonthSolid,
-        BullhornSolid,
-        CameraPhotoSolid,
-        ClipboardCleanSolid
-    } from 'flowbite-svelte-icons';
+    import FileLinesOutline from 'flowbite-svelte-icons/FileLinesOutline.svelte';
+    import ImageOutline from 'flowbite-svelte-icons/ImageOutline.svelte';
+    import GridSolid from 'flowbite-svelte-icons/GridSolid.svelte';
+    import TextSizeOutline from 'flowbite-svelte-icons/TextSizeOutline.svelte';
+    import TableColumnSolid from 'flowbite-svelte-icons/TableColumnSolid.svelte';
+    import VideoCameraSolid from 'flowbite-svelte-icons/VideoCameraSolid.svelte';
+    import MinusOutline from 'flowbite-svelte-icons/MinusOutline.svelte';
+    import CalendarMonthSolid from 'flowbite-svelte-icons/CalendarMonthSolid.svelte';
+    import BullhornSolid from 'flowbite-svelte-icons/BullhornSolid.svelte';
+    import CameraPhotoSolid from 'flowbite-svelte-icons/CameraPhotoSolid.svelte';
+    import ClipboardCleanSolid from 'flowbite-svelte-icons/ClipboardCleanSolid.svelte';
     import { editorStore } from '../stores/editor.svelte.js';
 
     const components = [
