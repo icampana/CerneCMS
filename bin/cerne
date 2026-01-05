@@ -31,6 +31,7 @@ $commands = [
     'user:create' => new UserCreateCommand(),
     'cache:clear' => new CacheClearCommand(),
     'system:check' => new \app\commands\SystemCheckCommand(),
+    'demo:reset' => new \app\commands\DemoResetCommand(),
 ];
 
 echo "CerneCMS CLI Tool\n";
