@@ -30,6 +30,7 @@ $commandArgs = array_slice($args, 1);
 $commands = [
     'user:create' => new UserCreateCommand(),
     'cache:clear' => new CacheClearCommand(),
+    'system:check' => new \app\commands\SystemCheckCommand(),
 ];
 
 echo "CerneCMS CLI Tool\n";
