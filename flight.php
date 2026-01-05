@@ -53,8 +53,21 @@ Flight::set('flight.log_errors', true);
 Flight::register('view', 'Latte\Engine', [], function ($latte) {
     // Configure cache directory
     $cacheDir = __DIR__ . '/public/cache';
-    if (!is_dir($cacheDir)) {
-        mkdir($cacheDir, 0777, true);
+
+    // Attempt to create if missing
+    if (!file_exists($cacheDir)) {
+        @mkdir($cacheDir, 0777, true);
+    }
+
+    // Check availability
+    if (!is_dir($cacheDir) || !is_writable($cacheDir)) {
+        // Variables for the template
+        $path = str_replace(__DIR__ . '/', '', $cacheDir);
+        $error = !file_exists($cacheDir) ? 'Directory could not be created' : 'Directory is not writable';
+
+        http_response_code(500);
+        require __DIR__ . '/app/views/errors/permission.php';
+        die();
     }
     $latte->setTempDirectory($cacheDir);
 
