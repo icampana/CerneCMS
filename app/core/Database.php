@@ -44,7 +44,6 @@ class Database
             // Create indexes
             $db->exec("CREATE INDEX idx_pages_slug ON pages(slug)");
             $db->exec("CREATE INDEX idx_blocks_page_id ON blocks(page_id)");
-            $db->exec("CREATE INDEX idx_blocks_page_id ON blocks(page_id)");
         }
 
         // Check if 'forms' table exists
